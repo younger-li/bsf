@@ -171,19 +171,19 @@
 
         <!-- 快速操作按钮 -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <button class="bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-lg shadow flex flex-col items-center transition-all">
+            <button id="add-pool-btn" class="bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-lg shadow flex flex-col items-center transition-all">
                 <i class="fa fa-plus-circle text-2xl mb-2"></i>
                 <span>添加养殖池</span>
             </button>
-            <button class="bg-green-500 hover:bg-green-600 text-white p-4 rounded-lg shadow flex flex-col items-center transition-all">
+            <button id="add-feeding-btn" class="bg-green-500 hover:bg-green-600 text-white p-4 rounded-lg shadow flex flex-col items-center transition-all">
                 <i class="fa fa-cutlery text-2xl mb-2"></i>
                 <span>添加投料记录</span>
             </button>
-            <button class="bg-yellow-500 hover:bg-yellow-600 text-white p-4 rounded-lg shadow flex flex-col items-center transition-all">
+            <button id="add-output-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white p-4 rounded-lg shadow flex flex-col items-center transition-all">
                 <i class="fa fa-download text-2xl mb-2"></i>
                 <span>添加产出记录</span>
             </button>
-            <button class="bg-purple-500 hover:bg-purple-600 text-white p-4 rounded-lg shadow flex flex-col items-center transition-all">
+            <button id="settings-btn" class="bg-purple-500 hover:bg-purple-600 text-white p-4 rounded-lg shadow flex flex-col items-center transition-all">
                 <i class="fa fa-cog text-2xl mb-2"></i>
                 <span>系统设置</span>
             </button>
@@ -196,43 +196,43 @@
             <h2 class="text-lg font-semibold mb-4">功能菜单</h2>
             <ul>
                 <li class="mb-2">
-                    <a href="#" class="flex items-center p-2 rounded-md bg-blue-50 text-blue-600">
+                    <a href="#" id="dashboard-link" class="flex items-center p-2 rounded-md bg-blue-50 text-blue-600">
                         <i class="fa fa-dashboard w-6"></i>
                         <span>系统概览</span>
                     </a>
                 </li>
                 <li class="mb-2">
-                    <a href="#" class="flex items-center p-2 rounded-md hover:bg-gray-100">
+                    <a href="#" id="breeding-link" class="flex items-center p-2 rounded-md hover:bg-gray-100">
                         <i class="fa fa-tint w-6"></i>
                         <span>种虫养殖</span>
                     </a>
                 </li>
                 <li class="mb-2">
-                    <a href="#" class="flex items-center p-2 rounded-md hover:bg-gray-100">
+                    <a href="#" id="hatching-link" class="flex items-center p-2 rounded-md hover:bg-gray-100">
                         <i class="fa fa-egg w-6"></i>
                         <span>虫卵孵化</span>
                     </a>
                 </li>
                 <li class="mb-2">
-                    <a href="#" class="flex items-center p-2 rounded-md hover:bg-gray-100">
+                    <a href="#" id="feed-link" class="flex items-center p-2 rounded-md hover:bg-gray-100">
                         <i class="fa fa-cutlery w-6"></i>
                         <span>饲料管理</span>
                     </a>
                 </li>
                 <li class="mb-2">
-                    <a href="#" class="flex items-center p-2 rounded-md hover:bg-gray-100">
+                    <a href="#" id="output-link" class="flex items-center p-2 rounded-md hover:bg-gray-100">
                         <i class="fa fa-cubes w-6"></i>
                         <span>产出管理</span>
                     </a>
                 </li>
                 <li class="mb-2">
-                    <a href="#" class="flex items-center p-2 rounded-md hover:bg-gray-100">
+                    <a href="#" id="user-management-link" class="flex items-center p-2 rounded-md hover:bg-gray-100">
                         <i class="fa fa-users w-6"></i>
                         <span>用户管理</span>
                     </a>
                 </li>
                 <li class="mb-2">
-                    <a href="#" class="flex items-center p-2 rounded-md hover:bg-gray-100">
+                    <a href="#" id="settings-link" class="flex items-center p-2 rounded-md hover:bg-gray-100">
                         <i class="fa fa-cog w-6"></i>
                         <span>系统设置</span>
                     </a>
@@ -867,6 +867,59 @@
             document.getElementById('logout').addEventListener('click', function(e) {
                 e.preventDefault();
                 logout();
+            });
+
+            // 侧边导航栏菜单
+            document.getElementById('dashboard-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('系统概览');
+            });
+
+            document.getElementById('breeding-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('种虫养殖');
+            });
+
+            document.getElementById('hatching-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('虫卵孵化');
+            });
+
+            document.getElementById('feed-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('饲料管理');
+            });
+
+            document.getElementById('output-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('产出管理');
+            });
+
+            document.getElementById('user-management-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                openUserManagement();
+            });
+
+            document.getElementById('settings-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('系统设置');
+            });
+
+            // 快速操作按钮
+            document.getElementById('add-pool-btn').addEventListener('click', function() {
+                alert('添加养殖池');
+            });
+
+            document.getElementById('add-feeding-btn').addEventListener('click', function() {
+                alert('添加投料记录');
+            });
+
+            document.getElementById('add-output-btn').addEventListener('click', function() {
+                alert('添加产出记录');
+            });
+
+            document.getElementById('settings-btn').addEventListener('click', function() {
+                alert('系统设置');
             });
         }
 
