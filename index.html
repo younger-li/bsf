@@ -838,89 +838,142 @@
 
         // 绑定事件
         function bindEvents() {
-            // 用户菜单下拉
-            document.getElementById('user-menu').addEventListener('click', function() {
-                const dropdown = document.getElementById('user-dropdown');
-                dropdown.classList.toggle('hidden');
-            });
-
-            // 点击其他地方关闭下拉菜单
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('#user-menu') && !e.target.closest('#user-dropdown')) {
-                    document.getElementById('user-dropdown').classList.add('hidden');
+            try {
+                // 用户菜单下拉
+                const userMenu = document.getElementById('user-menu');
+                if (userMenu) {
+                    userMenu.addEventListener('click', function() {
+                        const dropdown = document.getElementById('user-dropdown');
+                        if (dropdown) {
+                            dropdown.classList.toggle('hidden');
+                        }
+                    });
                 }
-            });
 
-            // 登录
-            document.getElementById('login-btn').addEventListener('click', function(e) {
-                e.preventDefault();
-                openLoginForm();
-            });
+                // 点击其他地方关闭下拉菜单
+                document.addEventListener('click', function(e) {
+                    const userMenu = document.getElementById('user-menu');
+                    const userDropdown = document.getElementById('user-dropdown');
+                    if (userMenu && userDropdown && !e.target.closest('#user-menu') && !e.target.closest('#user-dropdown')) {
+                        userDropdown.classList.add('hidden');
+                    }
+                });
 
-            // 注册
-            document.getElementById('register-btn').addEventListener('click', function(e) {
-                e.preventDefault();
-                openRegisterForm();
-            });
+                // 登录
+                const loginBtn = document.getElementById('login-btn');
+                if (loginBtn) {
+                    loginBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        openLoginForm();
+                    });
+                }
 
-            // 退出登录
-            document.getElementById('logout').addEventListener('click', function(e) {
-                e.preventDefault();
-                logout();
-            });
+                // 注册
+                const registerBtn = document.getElementById('register-btn');
+                if (registerBtn) {
+                    registerBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        openRegisterForm();
+                    });
+                }
 
-            // 侧边导航栏菜单
-            document.getElementById('dashboard-link').addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('系统概览');
-            });
+                // 退出登录
+                const logoutBtn = document.getElementById('logout');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        logout();
+                    });
+                }
 
-            document.getElementById('breeding-link').addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('种虫养殖');
-            });
+                // 侧边导航栏菜单
+                const dashboardLink = document.getElementById('dashboard-link');
+                if (dashboardLink) {
+                    dashboardLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        alert('系统概览');
+                    });
+                }
 
-            document.getElementById('hatching-link').addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('虫卵孵化');
-            });
+                const breedingLink = document.getElementById('breeding-link');
+                if (breedingLink) {
+                    breedingLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        alert('种虫养殖');
+                    });
+                }
 
-            document.getElementById('feed-link').addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('饲料管理');
-            });
+                const hatchingLink = document.getElementById('hatching-link');
+                if (hatchingLink) {
+                    hatchingLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        alert('虫卵孵化');
+                    });
+                }
 
-            document.getElementById('output-link').addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('产出管理');
-            });
+                const feedLink = document.getElementById('feed-link');
+                if (feedLink) {
+                    feedLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        alert('饲料管理');
+                    });
+                }
 
-            document.getElementById('user-management-link').addEventListener('click', function(e) {
-                e.preventDefault();
-                openUserManagement();
-            });
+                const outputLink = document.getElementById('output-link');
+                if (outputLink) {
+                    outputLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        alert('产出管理');
+                    });
+                }
 
-            document.getElementById('settings-link').addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('系统设置');
-            });
+                const userManagementLink = document.getElementById('user-management-link');
+                if (userManagementLink) {
+                    userManagementLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        openUserManagement();
+                    });
+                }
 
-            // 快速操作按钮
-            document.getElementById('add-pool-btn').addEventListener('click', function() {
-                alert('添加养殖池');
-            });
+                const settingsLink = document.getElementById('settings-link');
+                if (settingsLink) {
+                    settingsLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        alert('系统设置');
+                    });
+                }
 
-            document.getElementById('add-feeding-btn').addEventListener('click', function() {
-                alert('添加投料记录');
-            });
+                // 快速操作按钮
+                const addPoolBtn = document.getElementById('add-pool-btn');
+                if (addPoolBtn) {
+                    addPoolBtn.addEventListener('click', function() {
+                        alert('添加养殖池');
+                    });
+                }
 
-            document.getElementById('add-output-btn').addEventListener('click', function() {
-                alert('添加产出记录');
-            });
+                const addFeedingBtn = document.getElementById('add-feeding-btn');
+                if (addFeedingBtn) {
+                    addFeedingBtn.addEventListener('click', function() {
+                        alert('添加投料记录');
+                    });
+                }
 
-            document.getElementById('settings-btn').addEventListener('click', function() {
-                alert('系统设置');
-            });
+                const addOutputBtn = document.getElementById('add-output-btn');
+                if (addOutputBtn) {
+                    addOutputBtn.addEventListener('click', function() {
+                        alert('添加产出记录');
+                    });
+                }
+
+                const settingsBtn = document.getElementById('settings-btn');
+                if (settingsBtn) {
+                    settingsBtn.addEventListener('click', function() {
+                        alert('系统设置');
+                    });
+                }
+            } catch (error) {
+                console.error('绑定事件时出错:', error);
+            }
         }
 
         // 更新概览数据
