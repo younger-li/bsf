@@ -66,14 +66,13 @@
                 </button>
                 <div class="relative">
                     <button id="user-menu" class="flex items-center space-x-1 p-2 rounded hover:bg-blue-700 transition-all">
-                        <span>管理员</span>
+                        <span>用户</span>
                         <i class="fa fa-caret-down"></i>
                     </button>
                     <div id="user-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden">
-                        <a href="#" id="profile-settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">个人资料</a>
-                        <a href="#" id="system-settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">系统设置</a>
-                        <a href="#" id="user-management" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">用户管理</a>
-                        <a href="#" id="logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">退出登录</a>
+                        <a href="#" id="login-btn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">登录</a>
+                        <a href="#" id="register-btn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">注册</a>
+                        <a href="#" id="logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hidden">退出登录</a>
                     </div>
                 </div>
             </div>
@@ -81,7 +80,7 @@
     </nav>
 
     <!-- 主内容区 -->
-    <div class="container mx-auto px-4 py-6">
+    <div class="container mx-auto px-4 py-6 ml-64">
         <!-- 系统概览卡片 -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
@@ -378,8 +377,8 @@
                 }
                 alert('登录成功！');
                 closeModal();
-                // 刷新页面以更新登录状态
-                location.reload();
+                // 更新登录状态
+                checkLoginStatus();
             } else {
                 alert('手机号或密码错误！');
             }
@@ -486,8 +485,8 @@
                 localStorage.removeItem('currentUser');
                 localStorage.removeItem('rememberMe');
                 alert('您已成功退出登录！');
-                // 刷新页面以更新登录状态
-                location.reload();
+                // 更新登录状态
+                checkLoginStatus();
             }
         }
 
@@ -738,9 +737,17 @@
             if (currentUser) {
                 // 登录状态
                 console.log('用户已登录:', JSON.parse(currentUser));
+                document.getElementById('login-btn').classList.add('hidden');
+                document.getElementById('register-btn').classList.add('hidden');
+                document.getElementById('logout').classList.remove('hidden');
+                document.querySelector('#user-menu span').textContent = JSON.parse(currentUser).realName;
             } else {
                 // 未登录状态
                 console.log('用户未登录');
+                document.getElementById('login-btn').classList.remove('hidden');
+                document.getElementById('register-btn').classList.remove('hidden');
+                document.getElementById('logout').classList.add('hidden');
+                document.querySelector('#user-menu span').textContent = '用户';
             }
         }
 
@@ -844,10 +851,16 @@
                 }
             });
 
-            // 用户管理
-            document.getElementById('user-management').addEventListener('click', function(e) {
+            // 登录
+            document.getElementById('login-btn').addEventListener('click', function(e) {
                 e.preventDefault();
-                openUserManagement();
+                openLoginForm();
+            });
+
+            // 注册
+            document.getElementById('register-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                openRegisterForm();
             });
 
             // 退出登录
