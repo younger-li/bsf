@@ -3925,6 +3925,21 @@
                 downloadHistoricalReport(1);
             });
             
+            // 管理员菜单下拉
+            document.getElementById('user-menu').addEventListener('click', function() {
+                const dropdown = document.getElementById('user-dropdown');
+                dropdown.classList.toggle('hidden');
+            });
+            
+            // 点击其他地方关闭下拉菜单
+            document.addEventListener('click', function(e) {
+                const userMenu = document.getElementById('user-menu');
+                const dropdown = document.getElementById('user-dropdown');
+                if (!userMenu.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+            
             // 导入库存按钮
             document.getElementById('import-inventory').addEventListener('click', function() {
                 alert('此功能已删除');
@@ -5382,6 +5397,14 @@
                         <button id="add-user-btn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
                             <i class="fa fa-plus mr-2"></i>添加用户
                         </button>
+                        <div class="flex space-x-2">
+                            <button onclick="openLoginForm()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
+                                <i class="fa fa-sign-in mr-2"></i>登录
+                            </button>
+                            <button onclick="openRegisterForm()" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
+                                <i class="fa fa-user-plus mr-2"></i>注册
+                            </button>
+                        </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200 border">
@@ -5485,6 +5508,12 @@
                 return;
             }
 
+            // 检查手机号是否已存在
+            if (users.some(user => user.phone === phone)) {
+                alert('手机号已被注册！');
+                return;
+            }
+
             const newUser = {
                 id: Date.now(),
                 username,
@@ -5568,6 +5597,12 @@
                 return;
             }
 
+            // 检查手机号是否与其他用户重复
+            if (users.some((u, index) => u.phone === phone && index !== userIndex)) {
+                alert('手机号已被注册！');
+                return;
+            }
+
             users[userIndex] = {
                 ...users[userIndex],
                 username,
@@ -5589,6 +5624,282 @@
                 localStorage.setItem('users', JSON.stringify(users));
                 renderUserList();
             }
+        }
+
+        // 个人资料设置
+        function openProfileSettings() {
+            let profileHTML = `
+                <div class="p-6">
+                    <h2 class="text-xl font-bold text-center mb-6">个人资料设置</h2>
+                    <form id="profile-form">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label for="username" class="block text-sm font-medium text-gray-700 mb-2">用户名</label>
+                                <input type="text" id="username" name="username" value="管理员" class="border rounded-md px-3 py-2 text-sm w-full" readonly>
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">邮箱</label>
+                                <input type="email" id="email" name="email" value="admin@example.com" class="border rounded-md px-3 py-2 text-sm w-full">
+                            </div>
+                            <div>
+                                <label for="real-name" class="block text-sm font-medium text-gray-700 mb-2">真实姓名</label>
+                                <input type="text" id="real-name" name="real-name" value="张三" class="border rounded-md px-3 py-2 text-sm w-full">
+                            </div>
+                            <div>
+                                <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">手机号</label>
+                                <input type="tel" id="phone" name="phone" value="13800138000" class="border rounded-md px-3 py-2 text-sm w-full">
+                            </div>
+                        </div>
+                        <div class="flex justify-center space-x-4">
+                            <button type="button" id="save-profile" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md text-sm">保存修改</button>
+                            <button type="button" id="cancel-profile" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md text-sm">取消</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            openModal('个人资料设置', profileHTML, 'settings');
+
+            document.getElementById('save-profile').addEventListener('click', function() {
+                alert('个人资料修改成功！');
+                closeModal();
+            });
+
+            document.getElementById('cancel-profile').addEventListener('click', function() {
+                closeModal();
+            });
+        }
+
+        // 系统设置
+        function openSystemSettings() {
+            let settingsHTML = `
+                <div class="p-6">
+                    <h2 class="text-xl font-bold text-center mb-6">系统设置</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="text-lg font-medium mb-3">通知设置</h3>
+                            <div class="space-y-2">
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="notify-production" class="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" checked>
+                                    <label for="notify-production" class="ml-2 block text-sm text-gray-700">生产提醒</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="notify-inventory" class="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" checked>
+                                    <label for="notify-inventory" class="ml-2 block text-sm text-gray-700">库存预警</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="notify-report" class="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                    <label for="notify-report" class="ml-2 block text-sm text-gray-700">报表生成通知</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-medium mb-3">数据备份</h3>
+                            <button id="backup-data" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
+                                <i class="fa fa-download mr-2"></i>立即备份
+                            </button>
+                        </div>
+                        <div class="flex justify-center space-x-4">
+                            <button id="save-settings" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md text-sm">保存设置</button>
+                            <button id="cancel-settings" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md text-sm">取消</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            openModal('系统设置', settingsHTML, 'settings');
+
+            document.getElementById('backup-data').addEventListener('click', function() {
+                alert('数据备份开始，请稍候...');
+                setTimeout(() => {
+                    alert('数据备份成功！');
+                }, 2000);
+            });
+
+            document.getElementById('save-settings').addEventListener('click', function() {
+                alert('系统设置保存成功！');
+                closeModal();
+            });
+
+            document.getElementById('cancel-settings').addEventListener('click', function() {
+                closeModal();
+            });
+        }
+
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                // 清除登录状态
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('rememberMe');
+                alert('您已成功退出登录！');
+                // 刷新页面以更新登录状态
+                location.reload();
+                // 实际应用中，这里应该跳转到登录页面
+                // window.location.href = 'login.html';
+            }
+        }
+        
+        // 登录功能
+        function openLoginForm() {
+            let loginHTML = `
+                <div class="p-6">
+                    <h2 class="text-xl font-bold text-center mb-6">用户登录</h2>
+                    <form id="login-form">
+                        <div class="mb-4">
+                            <label for="login-phone" class="block text-sm font-medium text-gray-700 mb-1">手机号</label>
+                            <input type="tel" id="login-phone" name="phone" required class="w-full border rounded-md px-3 py-2 text-sm">
+                        </div>
+                        <div class="mb-4">
+                            <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
+                            <input type="password" id="login-password" name="password" required class="w-full border rounded-md px-3 py-2 text-sm">
+                        </div>
+                        <div class="flex items-center mb-6">
+                            <input type="checkbox" id="remember-me" class="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                            <label for="remember-me" class="ml-2 block text-sm text-gray-700">记住我</label>
+                        </div>
+                        <div class="flex justify-center space-x-4">
+                            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md text-sm">登录</button>
+                            <button type="button" onclick="closeModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md text-sm">取消</button>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <p class="text-sm text-gray-600">还没有账号？ <a href="#" id="go-to-register" class="text-blue-600 hover:text-blue-800">立即注册</a></p>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            openModal('用户登录', loginHTML, 'login');
+
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                login();
+            });
+
+            document.getElementById('go-to-register').addEventListener('click', function(e) {
+                e.preventDefault();
+                closeModal();
+                openRegisterForm();
+            });
+        }
+
+        function login() {
+            const phone = document.getElementById('login-phone').value;
+            const password = document.getElementById('login-password').value;
+            const rememberMe = document.getElementById('remember-me').checked;
+
+            // 查找用户
+            const user = users.find(u => u.phone === phone && u.password === password);
+            
+            if (user) {
+                // 保存登录状态
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                if (rememberMe) {
+                    localStorage.setItem('rememberMe', 'true');
+                } else {
+                    localStorage.removeItem('rememberMe');
+                }
+                alert('登录成功！');
+                closeModal();
+                // 刷新页面以更新登录状态
+                location.reload();
+            } else {
+                alert('手机号或密码错误！');
+            }
+        }
+
+        // 注册功能
+        function openRegisterForm() {
+            let registerHTML = `
+                <div class="p-6">
+                    <h2 class="text-xl font-bold text-center mb-6">用户注册</h2>
+                    <form id="register-form">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="register-username" class="block text-sm font-medium text-gray-700 mb-1">用户名</label>
+                                <input type="text" id="register-username" name="username" required class="w-full border rounded-md px-3 py-2 text-sm">
+                            </div>
+                            <div>
+                                <label for="register-phone" class="block text-sm font-medium text-gray-700 mb-1">手机号</label>
+                                <input type="tel" id="register-phone" name="phone" required class="w-full border rounded-md px-3 py-2 text-sm">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="register-password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
+                            <input type="password" id="register-password" name="password" required class="w-full border rounded-md px-3 py-2 text-sm">
+                        </div>
+                        <div class="mb-4">
+                            <label for="register-confirm-password" class="block text-sm font-medium text-gray-700 mb-1">确认密码</label>
+                            <input type="password" id="register-confirm-password" name="confirm-password" required class="w-full border rounded-md px-3 py-2 text-sm">
+                        </div>
+                        <div class="mb-4">
+                            <label for="register-real-name" class="block text-sm font-medium text-gray-700 mb-1">真实姓名</label>
+                            <input type="text" id="register-real-name" name="real-name" required class="w-full border rounded-md px-3 py-2 text-sm">
+                        </div>
+                        <div class="flex justify-center space-x-4">
+                            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md text-sm">注册</button>
+                            <button type="button" onclick="closeModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md text-sm">取消</button>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <p class="text-sm text-gray-600">已有账号？ <a href="#" id="go-to-login" class="text-blue-600 hover:text-blue-800">立即登录</a></p>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            openModal('用户注册', registerHTML, 'register');
+
+            document.getElementById('register-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                register();
+            });
+
+            document.getElementById('go-to-login').addEventListener('click', function(e) {
+                e.preventDefault();
+                closeModal();
+                openLoginForm();
+            });
+        }
+
+        function register() {
+            const username = document.getElementById('register-username').value;
+            const phone = document.getElementById('register-phone').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+            const realName = document.getElementById('register-real-name').value;
+
+            // 验证密码
+            if (password !== confirmPassword) {
+                alert('两次输入的密码不一致！');
+                return;
+            }
+
+            // 检查手机号是否已存在
+            if (users.some(user => user.phone === phone)) {
+                alert('手机号已被注册！');
+                return;
+            }
+
+            // 检查用户名是否已存在
+            if (users.some(user => user.username === username)) {
+                alert('用户名已存在！');
+                return;
+            }
+
+            const newUser = {
+                id: Date.now(),
+                username,
+                password,
+                phone,
+                role: 'user',
+                realName
+            };
+
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('注册成功！');
+            closeModal();
+            openLoginForm();
         }
         
         // 获取养殖池表单
