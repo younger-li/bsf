@@ -3699,6 +3699,30 @@
                     case 'edit-usage':
                         editUsageRecord();
                         break;
+                    case 'login':
+                        const phone = document.getElementById('login-phone').value;
+                        const password = document.getElementById('login-password').value;
+                        if (phone && password) {
+                            // 简单的登录验证
+                            if ((phone === '13800138000' && password === 'admin123') || 
+                                (phone === '13900139000' && password === 'super123')) {
+                                alert('登录成功！');
+                            } else {
+                                alert('手机号或密码错误！');
+                            }
+                        } else {
+                            alert('请输入手机号和密码！');
+                        }
+                        break;
+                    case 'register':
+                        const regPhone = document.getElementById('register-phone').value;
+                        const regPassword = document.getElementById('register-password').value;
+                        if (regPhone && regPassword) {
+                            alert('注册成功！请使用手机号和密码登录。');
+                        } else {
+                            alert('请输入手机号和密码！');
+                        }
+                        break;
                 }
                 
                 closeModal();
@@ -3936,6 +3960,42 @@
                 if (!userMenu.contains(e.target) && !dropdown.contains(e.target)) {
                     dropdown.classList.add('hidden');
                 }
+            });
+            
+            // 登录按钮点击事件
+            document.getElementById('login').addEventListener('click', function(e) {
+                e.preventDefault();
+                const loginForm = `
+                    <form>
+                        <div class="mb-4">
+                            <label for="login-phone" class="block text-sm font-medium text-gray-700 mb-1">手机号</label>
+                            <input type="tel" id="login-phone" class="w-full border rounded-md px-3 py-2 text-sm" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
+                            <input type="password" id="login-password" class="w-full border rounded-md px-3 py-2 text-sm" required>
+                        </div>
+                    </form>
+                `;
+                openModal('登录', loginForm, 'login');
+            });
+            
+            // 注册按钮点击事件
+            document.getElementById('register').addEventListener('click', function(e) {
+                e.preventDefault();
+                const registerForm = `
+                    <form>
+                        <div class="mb-4">
+                            <label for="register-phone" class="block text-sm font-medium text-gray-700 mb-1">手机号</label>
+                            <input type="tel" id="register-phone" class="w-full border rounded-md px-3 py-2 text-sm" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="register-password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
+                            <input type="password" id="register-password" class="w-full border rounded-md px-3 py-2 text-sm" required>
+                        </div>
+                    </form>
+                `;
+                openModal('注册', registerForm, 'register');
             });
             
             // 导出库存按钮
