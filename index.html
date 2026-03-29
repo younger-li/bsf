@@ -316,8 +316,8 @@
                                         <button id="add-material" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
                                             <i class="fa fa-plus mr-2"></i>添加原料
                                         </button>
-                                        <button id="import-inventory" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm flex items-center" disabled>
-                                            导入库存
+                                        <button id="export-inventory" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
+                                            导出库存
                                         </button>
                                     </div>
                                 </div>
@@ -438,7 +438,7 @@
                                 <!-- 搜索和筛选 -->
                                 <div class="flex flex-col md:flex-row gap-4 mb-6">
                                     <div class="flex-1">
-                                        <input type="text" id="usage-search" placeholder="搜索原料名称或使用用途" class="w-full border rounded-md px-3 py-2 text-sm">
+                                        <input type="text" id="usage-search" placeholder="搜索原料名称" class="w-full border rounded-md px-3 py-2 text-sm">
                                     </div>
                                     <div>
                                         <select id="usage-material-filter" class="border rounded-md px-3 py-2 text-sm">
@@ -459,16 +459,16 @@
                                         <thead class="bg-gray-50">
                                             <tr>
                                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    日期
+                                                    编号
                                                 </th>
                                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                     原料名称
                                                 </th>
                                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    使用量 (kg)
+                                                    日期
                                                 </th>
                                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    使用用途
+                                                    使用量 (kg)
                                                 </th>
                                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                     使用部门
@@ -3938,8 +3938,8 @@
                 }
             });
             
-            // 导入库存按钮
-            document.getElementById('import-inventory').addEventListener('click', function() {
+            // 导出库存按钮
+            document.getElementById('export-inventory').addEventListener('click', function() {
                 alert('此功能已删除');
             });
         }
@@ -6177,10 +6177,9 @@
         // 获取使用记录表单
         function getUsageForm(record = null) {
             const id = record ? record.id : '';
-            const materialId = record ? record.materialId : '1';
+            const materialName = record ? record.materialName : '餐厨渣料';
             const date = record ? record.date : new Date().toISOString().split('T')[0];
             const amount = record ? record.amount : '';
-            const purpose = record ? record.purpose : '养殖池投料';
             const department = record ? record.department : '养殖部';
             const operator = record ? record.operator : '张工';
             const notes = record ? record.notes : '';
@@ -6188,9 +6187,10 @@
             return `
                 <form>
                     <div class="mb-4">
-                        <label for="usage-material-id" class="block text-sm font-medium text-gray-700 mb-1">原料名称</label>
-                        <select id="usage-material-id" class="w-full border rounded-md px-3 py-2 text-sm">
-                            ${materials.map(material => `<option value="${material.id}" ${materialId == material.id ? 'selected' : ''}>${material.name}</option>`).join('')}
+                        <label for="usage-material-name" class="block text-sm font-medium text-gray-700 mb-1">原料名称</label>
+                        <select id="usage-material-name" class="w-full border rounded-md px-3 py-2 text-sm">
+                            <option value="餐厨渣料" ${materialName === '餐厨渣料' ? 'selected' : ''}>餐厨渣料</option>
+                            <option value="其他" ${materialName === '其他' ? 'selected' : ''}>其他</option>
                         </select>
                     </div>
                     <div class="mb-4">
@@ -6200,10 +6200,6 @@
                     <div class="mb-4">
                         <label for="usage-amount" class="block text-sm font-medium text-gray-700 mb-1">使用量 (kg)</label>
                         <input type="number" id="usage-amount" value="${amount}" step="0.1" min="0" class="w-full border rounded-md px-3 py-2 text-sm" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="usage-purpose" class="block text-sm font-medium text-gray-700 mb-1">使用用途</label>
-                        <input type="text" id="usage-purpose" value="${purpose}" class="w-full border rounded-md px-3 py-2 text-sm" required>
                     </div>
                     <div class="mb-4">
                         <label for="usage-department" class="block text-sm font-medium text-gray-700 mb-1">使用部门</label>
@@ -6813,23 +6809,21 @@
         
         // 添加使用记录
         function addUsageRecord() {
-            const materialId = parseInt(document.getElementById('usage-material-id').value);
+            const materialName = document.getElementById('usage-material-name').value;
             const date = document.getElementById('usage-date').value;
             const amount = parseFloat(document.getElementById('usage-amount').value);
-            const purpose = document.getElementById('usage-purpose').value;
             const department = document.getElementById('usage-department').value;
             const operator = document.getElementById('usage-operator').value;
             const notes = document.getElementById('usage-notes').value;
             
             // 检查库存是否足够
-            const material = materials.find(m => m.id === materialId);
+            const material = materials.find(m => m.name === materialName);
             if (material && material.stock >= amount) {
                 const newRecord = {
                     id: usageRecords.length > 0 ? Math.max(...usageRecords.map(r => r.id)) + 1 : 1,
-                    materialId: materialId,
+                    materialName: materialName,
                     date: date,
                     amount: amount,
-                    purpose: purpose,
                     department: department,
                     operator: operator,
                     notes: notes
@@ -6864,10 +6858,9 @@
         // 编辑使用记录
         function editUsageRecord() {
             const recordId = parseInt(document.getElementById('edit-usage-id').value);
-            const materialId = parseInt(document.getElementById('usage-material-id').value);
+            const materialName = document.getElementById('usage-material-name').value;
             const date = document.getElementById('usage-date').value;
             const amount = parseFloat(document.getElementById('usage-amount').value);
-            const purpose = document.getElementById('usage-purpose').value;
             const department = document.getElementById('usage-department').value;
             const operator = document.getElementById('usage-operator').value;
             const notes = document.getElementById('usage-notes').value;
@@ -6875,7 +6868,7 @@
             const recordIndex = usageRecords.findIndex(r => r.id === recordId);
             if (recordIndex !== -1) {
                 const oldRecord = usageRecords[recordIndex];
-                const material = materials.find(m => m.id === materialId);
+                const material = materials.find(m => m.name === materialName);
                 
                 // 检查库存是否足够
                 if (material && (material.stock + oldRecord.amount >= amount)) {
@@ -6897,10 +6890,9 @@
                     
                     usageRecords[recordIndex] = {
                         ...usageRecords[recordIndex],
-                        materialId: materialId,
+                        materialName: materialName,
                         date: date,
                         amount: amount,
-                        purpose: purpose,
                         department: department,
                         operator: operator,
                         notes: notes
@@ -7428,6 +7420,28 @@
             document.getElementById('total-stock').textContent = materials.reduce((sum, m) => sum + m.stock, 0).toFixed(1);
             document.getElementById('total-value').textContent = materials.reduce((sum, m) => sum + m.value, 0).toFixed(2);
             document.getElementById('warning-count').textContent = materials.filter(m => m.status === '紧缺' || m.status === '偏低').length;
+        }
+        
+        // 更新使用记录表格
+        function updateUsageTable() {
+            const tableBody = document.getElementById('usage-table-body');
+            if (!tableBody) return;
+            
+            tableBody.innerHTML = usageRecords.map(record => `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.id}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.materialName}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.amount}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.department}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.operator}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.notes}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <a href="#" class="text-blue-600 hover:text-blue-900 mr-3" onclick="editUsageRecord(${record.id})">编辑</a>
+                        <a href="#" class="text-red-600 hover:text-red-900" onclick="deleteUsageRecord(${record.id})">删除</a>
+                    </td>
+                </tr>
+            `).join('');
         }
         
         // 更新概览数据
