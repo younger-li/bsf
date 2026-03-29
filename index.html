@@ -80,85 +80,6 @@
 
     <!-- 主内容区 -->
     <div class="container mx-auto px-4 py-6">
-        <!-- 系统概览卡片 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium">当前种虫数量</p>
-                        <p class="text-2xl font-bold text-gray-800" id="total-larvae">0</p>
-                    </div>
-                    <div class="bg-blue-100 p-3 rounded-full">
-                        <i class="fa fa-bug text-blue-500 text-xl"></i>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <span class="text-green-500 flex items-center">
-                        <i class="fa fa-arrow-up mr-1"></i>
-                        <span id="larvae-increase">0%</span>
-                    </span>
-                    <span class="text-gray-500 ml-2">较上周</span>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium">虫卵总产量</p>
-                        <p class="text-2xl font-bold text-gray-800" id="total-eggs">0</p>
-                    </div>
-                    <div class="bg-green-100 p-3 rounded-full">
-                        <i class="fa fa-circle text-green-500 text-xl"></i>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <span class="text-green-500 flex items-center">
-                        <i class="fa fa-arrow-up mr-1"></i>
-                        <span id="eggs-increase">0%</span>
-                    </span>
-                    <span class="text-gray-500 ml-2">较上月</span>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium">料虫比</p>
-                        <p class="text-2xl font-bold text-gray-800" id="feed-ratio">0.0</p>
-                    </div>
-                    <div class="bg-yellow-100 p-3 rounded-full">
-                        <i class="fa fa-balance-scale text-yellow-500 text-xl"></i>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <span class="text-red-500 flex items-center">
-                        <i class="fa fa-arrow-down mr-1"></i>
-                        <span id="feed-ratio-decrease">0%</span>
-                    </span>
-                    <span class="text-gray-500 ml-2">较上月</span>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium">虫卵比</p>
-                        <p class="text-2xl font-bold text-gray-800" id="egg-ratio">0.0</p>
-                    </div>
-                    <div class="bg-purple-100 p-3 rounded-full">
-                        <i class="fa fa-percent text-purple-500 text-xl"></i>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <span class="text-green-500 flex items-center">
-                        <i class="fa fa-arrow-up mr-1"></i>
-                        <span id="egg-ratio-increase">0%</span>
-                    </span>
-                    <span class="text-gray-500 ml-2">较上月</span>
-                </div>
-            </div>
-        </div>
-
         <!-- 功能选项卡 -->
         <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
             <div class="border-b">
@@ -188,25 +109,106 @@
             <div class="p-6">
                 <!-- 系统概览 -->
                 <div id="overview-tab" class="tab-content active">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- 养殖趋势图 -->
-                        <div class="bg-white rounded-lg shadow-md p-4">
-                            <h3 class="text-lg font-medium text-gray-800 mb-4">养殖趋势</h3>
-                            <div class="h-64">
-                                <canvas id="breeding-chart"></canvas>
+                    <div class="space-y-6">
+                        <!-- 第一排：养殖趋势和孵化趋势 -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- 养殖趋势图 -->
+                            <div class="bg-white rounded-lg shadow-md p-4">
+                                <h3 class="text-lg font-medium text-gray-800 mb-4">养殖趋势</h3>
+                                <div class="h-64">
+                                    <canvas id="breeding-chart"></canvas>
+                                </div>
+                            </div>
+                            
+                            <!-- 孵化趋势图 -->
+                            <div class="bg-white rounded-lg shadow-md p-4">
+                                <h3 class="text-lg font-medium text-gray-800 mb-4">孵化趋势</h3>
+                                <div class="h-64">
+                                    <canvas id="hatching-chart"></canvas>
+                                </div>
                             </div>
                         </div>
-                        
-                        <!-- 孵化趋势图 -->
-                        <div class="bg-white rounded-lg shadow-md p-4">
-                            <h3 class="text-lg font-medium text-gray-800 mb-4">孵化趋势</h3>
-                            <div class="h-64">
-                                <canvas id="hatching-chart"></canvas>
-                            </div>
-                        </div>
-                        
 
-                        <!-- 通知 -->
+                        <!-- 第二排：四个统计卡片 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="text-sm text-gray-500 font-medium">当前种虫数量</p>
+                                        <p class="text-2xl font-bold text-gray-800" id="total-larvae">0</p>
+                                    </div>
+                                    <div class="bg-blue-100 p-3 rounded-full">
+                                        <i class="fa fa-bug text-blue-500 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex items-center text-sm">
+                                    <span class="text-green-500 flex items-center">
+                                        <i class="fa fa-arrow-up mr-1"></i>
+                                        <span id="larvae-increase">0%</span>
+                                    </span>
+                                    <span class="text-gray-500 ml-2">较上周</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="text-sm text-gray-500 font-medium">虫卵总产量</p>
+                                        <p class="text-2xl font-bold text-gray-800" id="total-eggs">0</p>
+                                    </div>
+                                    <div class="bg-green-100 p-3 rounded-full">
+                                        <i class="fa fa-circle text-green-500 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex items-center text-sm">
+                                    <span class="text-green-500 flex items-center">
+                                        <i class="fa fa-arrow-up mr-1"></i>
+                                        <span id="eggs-increase">0%</span>
+                                    </span>
+                                    <span class="text-gray-500 ml-2">较上月</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="text-sm text-gray-500 font-medium">料虫比</p>
+                                        <p class="text-2xl font-bold text-gray-800" id="feed-ratio">0.0</p>
+                                    </div>
+                                    <div class="bg-yellow-100 p-3 rounded-full">
+                                        <i class="fa fa-balance-scale text-yellow-500 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex items-center text-sm">
+                                    <span class="text-red-500 flex items-center">
+                                        <i class="fa fa-arrow-down mr-1"></i>
+                                        <span id="feed-ratio-decrease">0%</span>
+                                    </span>
+                                    <span class="text-gray-500 ml-2">较上月</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="text-sm text-gray-500 font-medium">虫卵比</p>
+                                        <p class="text-2xl font-bold text-gray-800" id="egg-ratio">0.0</p>
+                                    </div>
+                                    <div class="bg-purple-100 p-3 rounded-full">
+                                        <i class="fa fa-percent text-purple-500 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex items-center text-sm">
+                                    <span class="text-green-500 flex items-center">
+                                        <i class="fa fa-arrow-up mr-1"></i>
+                                        <span id="egg-ratio-increase">0%</span>
+                                    </span>
+                                    <span class="text-gray-500 ml-2">较上月</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 第三排：通知栏（横向延伸） -->
                         <div class="bg-white rounded-lg shadow-md p-4">
                             <h3 class="text-lg font-medium text-gray-800 mb-4">通知</h3>
                             <div class="space-y-4">
