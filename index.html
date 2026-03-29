@@ -205,49 +205,7 @@
                             </div>
                         </div>
                         
-                        <!-- 最近活动 -->
-                        <div class="bg-white rounded-lg shadow-md p-4">
-                            <h3 class="text-lg font-medium text-gray-800 mb-4">最近活动</h3>
-                            <div class="space-y-4">
-                                <div class="flex items-start">
-                                    <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                                        <i class="fa fa-upload text-blue-500"></i>
-                                    </div>
-                                    <div class="ml-3">
-                                        <p class="text-sm font-medium text-gray-800">种虫入厂</p>
-                                        <p class="text-xs text-gray-500">2023-07-20 09:30</p>
-                                    </div>
-                                    <div class="ml-auto">
-                                        <span class="text-sm font-medium">1000 只</span>
-                                    </div>
-                                </div>
-                                <div class="flex items-start">
-                                    <div class="flex-shrink-0 h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
-                                        <i class="fa fa-download text-green-500"></i>
-                                    </div>
-                                    <div class="ml-3">
-                                        <p class="text-sm font-medium text-gray-800">虫卵产出</p>
-                                        <p class="text-xs text-gray-500">2023-07-19 16:45</p>
-                                    </div>
-                                    <div class="ml-auto">
-                                        <span class="text-sm font-medium">5000 枚</span>
-                                    </div>
-                                </div>
-                                <div class="flex items-start">
-                                    <div class="flex-shrink-0 h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center">
-                                        <i class="fa fa-cutlery text-yellow-500"></i>
-                                    </div>
-                                    <div class="ml-3">
-                                        <p class="text-sm font-medium text-gray-800">投料记录</p>
-                                        <p class="text-xs text-gray-500">2023-07-19 08:15</p>
-                                    </div>
-                                    <div class="ml-auto">
-                                        <span class="text-sm font-medium">50 kg</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
+
                         <!-- 通知 -->
                         <div class="bg-white rounded-lg shadow-md p-4">
                             <h3 class="text-lg font-medium text-gray-800 mb-4">通知</h3>
@@ -3691,7 +3649,7 @@
                         addMaterial();
                         break;
                     case 'edit-material':
-                        editMaterial();
+                        editMaterialSave();
                         break;
                     case 'add-usage':
                         addUsageRecord();
@@ -6987,7 +6945,29 @@
         }
         
         // 编辑原料
-        function editMaterial() {
+        function editMaterial(id) {
+            const material = materials.find(m => m.id === id);
+            if (material) {
+                const form = getMaterialForm(material);
+                openModal('编辑原料', form, 'edit-material');
+                document.getElementById('modal-content').innerHTML += `<input type="hidden" id="edit-material-id" value="${id}">`;
+            }
+        }
+        
+        // 删除原料
+        function deleteMaterial(id) {
+            if (confirm('确定要删除此原料吗？')) {
+                const materialIndex = materials.findIndex(m => m.id === id);
+                if (materialIndex !== -1) {
+                    materials.splice(materialIndex, 1);
+                    updateMaterialsTable();
+                    alert('原料删除成功！');
+                }
+            }
+        }
+        
+        // 编辑原料保存
+        function editMaterialSave() {
             const materialId = parseInt(document.getElementById('edit-material-id').value);
             const name = document.getElementById('material-name').value;
             const todayInStock = parseFloat(document.getElementById('material-today-in-stock').value);
@@ -7604,6 +7584,7 @@
             updatePupaOutTable();
             updateOvipositionInTable();
             updateOvipositionOutTable();
+            updateMaterialsTable();
         }
         
         // 更新原料表格
