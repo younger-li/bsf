@@ -358,7 +358,7 @@
                                                     原料名称
                                                 </th>
                                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    类别
+                                                    今日入库 (kg)
                                                 </th>
                                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                     当前库存 (kg)
@@ -6139,26 +6139,24 @@
         // 获取原料表单
         function getMaterialForm(material = null) {
             const id = material ? material.id : '';
-            const name = material ? material.name : '';
-            const category = material ? material.category : '饲料';
+            const name = material ? material.name : '餐厨渣料';
             const stock = material ? material.stock : '';
             const safeStock = material ? material.safeStock : '';
             const unitCost = material ? material.unitCost : '';
+            const todayInStock = material ? (material.todayInStock || '') : '';
             
             return `
                 <form>
                     <div class="mb-4">
                         <label for="material-name" class="block text-sm font-medium text-gray-700 mb-1">原料名称</label>
-                        <input type="text" id="material-name" value="${name}" class="w-full border rounded-md px-3 py-2 text-sm" required>
+                        <select id="material-name" class="w-full border rounded-md px-3 py-2 text-sm" required>
+                            <option value="餐厨渣料" ${name === '餐厨渣料' ? 'selected' : ''}>餐厨渣料</option>
+                            <option value="其他" ${name === '其他' ? 'selected' : ''}>其他</option>
+                        </select>
                     </div>
                     <div class="mb-4">
-                        <label for="material-category" class="block text-sm font-medium text-gray-700 mb-1">类别</label>
-                        <select id="material-category" class="w-full border rounded-md px-3 py-2 text-sm">
-                            <option value="饲料" ${category === '饲料' ? 'selected' : ''}>饲料</option>
-                            <option value="添加剂" ${category === '添加剂' ? 'selected' : ''}>添加剂</option>
-                            <option value="餐厨渣料" ${category === '餐厨渣料' ? 'selected' : ''}>餐厨渣料</option>
-                            <option value="其他" ${category === '其他' ? 'selected' : ''}>其他</option>
-                        </select>
+                        <label for="material-today-in-stock" class="block text-sm font-medium text-gray-700 mb-1">今日入库 (kg)</label>
+                        <input type="number" id="material-today-in-stock" value="${todayInStock}" step="0.1" min="0" class="w-full border rounded-md px-3 py-2 text-sm" required>
                     </div>
                     <div class="mb-4">
                         <label for="material-stock" class="block text-sm font-medium text-gray-700 mb-1">当前库存 (kg)</label>
@@ -6743,7 +6741,7 @@
         // 添加原料
         function addMaterial() {
             const name = document.getElementById('material-name').value;
-            const category = document.getElementById('material-category').value;
+            const todayInStock = parseFloat(document.getElementById('material-today-in-stock').value);
             const stock = parseFloat(document.getElementById('material-stock').value);
             const safeStock = parseFloat(document.getElementById('material-safe-stock').value);
             const unitCost = parseFloat(document.getElementById('material-unit-cost').value);
@@ -6761,8 +6759,8 @@
             const newMaterial = {
                 id: materials.length > 0 ? Math.max(...materials.map(m => m.id)) + 1 : 1,
                 name: name,
-                category: category,
                 stock: stock,
+                todayInStock: todayInStock,
                 safeStock: safeStock,
                 unitCost: unitCost,
                 value: parseFloat(value),
@@ -6779,7 +6777,7 @@
         function editMaterial() {
             const materialId = parseInt(document.getElementById('edit-material-id').value);
             const name = document.getElementById('material-name').value;
-            const category = document.getElementById('material-category').value;
+            const todayInStock = parseFloat(document.getElementById('material-today-in-stock').value);
             const stock = parseFloat(document.getElementById('material-stock').value);
             const safeStock = parseFloat(document.getElementById('material-safe-stock').value);
             const unitCost = parseFloat(document.getElementById('material-unit-cost').value);
@@ -6799,8 +6797,8 @@
                 materials[materialIndex] = {
                     ...materials[materialIndex],
                     name: name,
-                    category: category,
                     stock: stock,
+                    todayInStock: todayInStock,
                     safeStock: safeStock,
                     unitCost: unitCost,
                     value: parseFloat(value),
@@ -7397,6 +7395,39 @@
             updatePupaOutTable();
             updateOvipositionInTable();
             updateOvipositionOutTable();
+        }
+        
+        // 更新原料表格
+        function updateMaterialsTable() {
+            const tableBody = document.getElementById('materials-table-body');
+            if (!tableBody) return;
+            
+            tableBody.innerHTML = materials.map(material => `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${material.id}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material.todayInStock || 0}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material.stock}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material.safeStock}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material.unitCost}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material.value}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(material.status)}">
+                            ${material.status}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <a href="#" class="text-blue-600 hover:text-blue-900 mr-3" onclick="editMaterial(${material.id})">编辑</a>
+                        <a href="#" class="text-red-600 hover:text-red-900" onclick="deleteMaterial(${material.id})">删除</a>
+                    </td>
+                </tr>
+            `).join('');
+            
+            // 更新库存汇总
+            document.getElementById('total-material-types').textContent = materials.length;
+            document.getElementById('total-stock').textContent = materials.reduce((sum, m) => sum + m.stock, 0).toFixed(1);
+            document.getElementById('total-value').textContent = materials.reduce((sum, m) => sum + m.value, 0).toFixed(2);
+            document.getElementById('warning-count').textContent = materials.filter(m => m.status === '紧缺' || m.status === '偏低').length;
         }
         
         // 更新概览数据
