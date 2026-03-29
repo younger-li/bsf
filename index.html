@@ -3942,6 +3942,163 @@
             document.getElementById('export-inventory').addEventListener('click', function() {
                 alert('此功能已删除');
             });
+            
+            // 生成使用报表按钮
+            document.getElementById('generate-usage-report').addEventListener('click', function() {
+                const startDate = document.getElementById('usage-start-date').value;
+                const endDate = document.getElementById('usage-end-date').value;
+                
+                if (!startDate || !endDate) {
+                    alert('请选择日期范围！');
+                    return;
+                }
+                
+                // 筛选日期范围内的使用记录
+                const filteredRecords = usageRecords.filter(record => {
+                    return record.date >= startDate && record.date <= endDate;
+                });
+                
+                if (filteredRecords.length === 0) {
+                    alert('所选日期范围内没有使用记录！');
+                    return;
+                }
+                
+                // 计算统计数据
+                const totalAmount = filteredRecords.reduce((sum, record) => sum + record.amount, 0);
+                const avgAmount = totalAmount / filteredRecords.length;
+                
+                // 按原料分组统计
+                const materialStats = {};
+                filteredRecords.forEach(record => {
+                    if (!materialStats[record.materialName]) {
+                        materialStats[record.materialName] = 0;
+                    }
+                    materialStats[record.materialName] += record.amount;
+                });
+                
+                // 生成报表HTML
+                let reportHTML = `
+                    <div class="p-4">
+                        <h2 class="text-xl font-bold text-center mb-4">原料使用报表 (${startDate} 至 ${endDate})</h2>
+                        <div class="mb-4">
+                            <p class="text-lg"><strong>总使用量:</strong> ${totalAmount.toFixed(2)} kg</p>
+                            <p class="text-lg"><strong>平均使用量:</strong> ${avgAmount.toFixed(2)} kg</p>
+                            <p class="text-lg"><strong>记录条数:</strong> ${filteredRecords.length}</p>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">各原料使用情况:</h3>
+                        <table class="w-full border-collapse mb-4">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="border px-4 py-2">原料名称</th>
+                                    <th class="border px-4 py-2">使用量 (kg)</th>
+                                    <th class="border px-4 py-2">占比</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                Object.entries(materialStats).forEach(([material, amount]) => {
+                    const percentage = ((amount / totalAmount) * 100).toFixed(2);
+                    reportHTML += `
+                        <tr>
+                            <td class="border px-4 py-2">${material}</td>
+                            <td class="border px-4 py-2">${amount.toFixed(2)}</td>
+                            <td class="border px-4 py-2">${percentage}%</td>
+                        </tr>
+                    `;
+                });
+                
+                reportHTML += `
+                            </tbody>
+                        </table>
+                        <h3 class="text-lg font-bold mb-2">详细记录:</h3>
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="border px-4 py-2">日期</th>
+                                    <th class="border px-4 py-2">原料名称</th>
+                                    <th class="border px-4 py-2">使用量 (kg)</th>
+                                    <th class="border px-4 py-2">使用部门</th>
+                                    <th class="border px-4 py-2">操作人</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                filteredRecords.forEach(record => {
+                    reportHTML += `
+                        <tr>
+                            <td class="border px-4 py-2">${record.date}</td>
+                            <td class="border px-4 py-2">${record.materialName}</td>
+                            <td class="border px-4 py-2">${record.amount.toFixed(2)}</td>
+                            <td class="border px-4 py-2">${record.department}</td>
+                            <td class="border px-4 py-2">${record.operator}</td>
+                        </tr>
+                    `;
+                });
+                
+                reportHTML += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                
+                openModal('原料使用报表', reportHTML, 'usage-report');
+            });
+            
+            // 初始化原料筛选下拉框
+            function initMaterialFilter() {
+                const filterSelect = document.getElementById('usage-material-filter');
+                if (filterSelect) {
+                    // 清空现有选项
+                    filterSelect.innerHTML = '<option value="">所有原料</option>';
+                    
+                    // 添加餐厨渣料和其他选项
+                    const options = ['餐厨渣料', '其他'];
+                    options.forEach(option => {
+                        const optionElement = document.createElement('option');
+                        optionElement.value = option;
+                        optionElement.textContent = option;
+                        filterSelect.appendChild(optionElement);
+                    });
+                }
+            }
+            
+            // 初始化原料筛选下拉框
+            initMaterialFilter();
+            
+            // 查询使用记录按钮
+            document.getElementById('search-usage-records').addEventListener('click', function() {
+                const searchTerm = document.getElementById('usage-search').value.toLowerCase();
+                const materialFilter = document.getElementById('usage-material-filter').value;
+                
+                // 筛选记录
+                const filteredRecords = usageRecords.filter(record => {
+                    const matchesSearch = record.materialName.toLowerCase().includes(searchTerm);
+                    const matchesFilter = !materialFilter || record.materialName === materialFilter;
+                    return matchesSearch && matchesFilter;
+                });
+                
+                // 更新表格
+                const tableBody = document.getElementById('usage-table-body');
+                if (tableBody) {
+                    tableBody.innerHTML = filteredRecords.map(record => `
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.id}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.materialName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.date}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.amount}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.department}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.operator}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.notes}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <a href="#" class="text-blue-600 hover:text-blue-900 mr-3" onclick="editUsageRecord(${record.id})">编辑</a>
+                                <a href="#" class="text-red-600 hover:text-red-900" onclick="deleteUsageRecord(${record.id})">删除</a>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            });
         }
         
         // 打开模态框
