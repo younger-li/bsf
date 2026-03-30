@@ -3022,9 +3022,8 @@
         ];
         
         let usageRecords = [
-            { id: 1, materialId: 1, date: '2023-07-20', amount: 50, purpose: '养殖池投料', department: '养殖部', operator: '张工', notes: '正常使用' },
-            { id: 2, materialId: 2, date: '2023-07-19', amount: 30, purpose: '养殖池投料', department: '养殖部', operator: '张工', notes: '正常使用' },
-            { id: 3, materialId: 7, date: '2023-07-19', amount: 100, purpose: '养殖池投料', department: '养殖部', operator: '李工', notes: '正常使用' }
+            { id: 1, materialId: 1, materialName: '餐厨渣料', date: '2023-07-20', amount: 50, department: '养殖部', operator: '张工', notes: '正常使用' },
+            { id: 2, materialId: 2, materialName: '其他', date: '2023-07-19', amount: 30, department: '养殖部', operator: '张工', notes: '正常使用' }
         ];
         
         let pools = [
@@ -7105,40 +7104,38 @@
             
             // 检查库存是否足够
             const material = materials.find(m => m.name === materialName);
-            if (material && material.stock >= amount) {
-                const newRecord = {
-                    id: usageRecords.length > 0 ? Math.max(...usageRecords.map(r => r.id)) + 1 : 1,
-                    materialName: materialName,
-                    date: date,
-                    amount: amount,
-                    department: department,
-                    operator: operator,
-                    notes: notes
-                };
+            if (material) {
+                // 计算实时库存
+                const today = new Date().toISOString().split('T')[0];
+                const todayUsage = usageRecords.filter(record => 
+                    record.date === today && record.materialId === material.id
+                ).reduce((sum, record) => sum + record.amount, 0);
+                const realTimeStock = material.stock + (material.todayInStock || 0) - todayUsage;
                 
-                usageRecords.push(newRecord);
-                
-                // 更新库存
-                material.stock -= amount;
-                material.value = (material.stock * material.unitCost).toFixed(2);
-                
-                // 更新状态
-                let status = '充足';
-                if (material.stock < material.safeStock * 0.5) {
-                    status = '紧缺';
-                } else if (material.stock < material.safeStock) {
-                    status = '偏低';
-                } else if (material.stock < material.safeStock * 1.5) {
-                    status = '正常';
+                if (realTimeStock >= amount) {
+                    const newRecord = {
+                        id: usageRecords.length > 0 ? Math.max(...usageRecords.map(r => r.id)) + 1 : 1,
+                        materialId: material.id,
+                        materialName: materialName,
+                        date: date,
+                        amount: amount,
+                        department: department,
+                        operator: operator,
+                        notes: notes
+                    };
+                    
+                    usageRecords.push(newRecord);
+                    
+                    // 更新原料表格和库存汇总表
+                    updateMaterialsTable();
+                    updateUsageTable();
+                    
+                    alert('使用记录添加成功！');
+                } else {
+                    alert('库存不足！');
                 }
-                material.status = status;
-                
-                updateMaterialsTable();
-                updateUsageTable();
-                
-                alert('使用记录添加成功！');
             } else {
-                alert('库存不足！');
+                alert('原料不存在！');
             }
         }
         
@@ -7662,6 +7659,8 @@
             const tableBody = document.getElementById('inventory-summary-body');
             if (!tableBody) return;
             
+            const today = new Date().toISOString().split('T')[0];
+            
             // 按类别分组
             const categories = ['餐厨渣料', '其他'];
             const categoryData = [];
@@ -7669,11 +7668,32 @@
             categories.forEach(category => {
                 const categoryMaterials = materials.filter(m => m.category === category);
                 if (categoryMaterials.length > 0) {
-                    const totalTodayInStock = categoryMaterials.reduce((sum, m) => sum + (m.todayInStock || 0), 0);
-                    const totalStock = categoryMaterials.reduce((sum, m) => sum + m.stock, 0);
-                    const totalSafeStock = categoryMaterials.reduce((sum, m) => sum + m.safeStock, 0);
-                    const avgUnitCost = totalStock > 0 ? (categoryMaterials.reduce((sum, m) => sum + (m.unitCost * m.stock), 0) / totalStock).toFixed(2) : 0;
-                    const totalValue = categoryMaterials.reduce((sum, m) => sum + m.value, 0);
+                    let totalTodayInStock = 0;
+                    let totalStock = 0;
+                    let totalSafeStock = 0;
+                    let totalValue = 0;
+                    let totalCost = 0;
+                    
+                    categoryMaterials.forEach(material => {
+                        // 计算今日使用数量
+                        const todayUsage = usageRecords.filter(record => 
+                            record.date === today && record.materialId === material.id
+                        ).reduce((sum, record) => sum + record.amount, 0);
+                        
+                        // 计算实时库存
+                        const realTimeStock = material.stock + (material.todayInStock || 0) - todayUsage;
+                        
+                        // 计算实时价值
+                        const realTimeValue = realTimeStock * material.unitCost;
+                        
+                        totalTodayInStock += (material.todayInStock || 0);
+                        totalStock += realTimeStock;
+                        totalSafeStock += material.safeStock;
+                        totalValue += realTimeValue;
+                        totalCost += (material.unitCost * realTimeStock);
+                    });
+                    
+                    const avgUnitCost = totalStock > 0 ? (totalCost / totalStock).toFixed(2) : 0;
                     
                     // 计算库存状态
                     let status = '充足';
@@ -7740,26 +7760,51 @@
             const tableBody = document.getElementById('materials-table-body');
             if (!tableBody) return;
             
-            tableBody.innerHTML = materials.map(material => `
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${material.id}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material.name}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material.todayInStock || 0}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material.stock}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material.safeStock}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material.unitCost}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material.value}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(material.status)}">
-                            ${material.status}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <a href="#" class="text-blue-600 hover:text-blue-900 mr-3" onclick="editMaterial(${material.id});">编辑</a>
-                        <a href="#" class="text-red-600 hover:text-red-900" onclick="deleteMaterial(${material.id});">删除</a>
-                    </td>
-                </tr>
-            `).join('');
+            const today = new Date().toISOString().split('T')[0];
+            
+            tableBody.innerHTML = materials.map(material => {
+                // 计算今日使用数量
+                const todayUsage = usageRecords.filter(record => 
+                    record.date === today && record.materialId === material.id
+                ).reduce((sum, record) => sum + record.amount, 0);
+                
+                // 计算实时库存
+                const realTimeStock = material.stock + (material.todayInStock || 0) - todayUsage;
+                
+                // 计算实时价值
+                const realTimeValue = realTimeStock * material.unitCost;
+                
+                // 计算库存状态
+                let status = '充足';
+                if (realTimeStock < material.safeStock * 0.5) {
+                    status = '紧缺';
+                } else if (realTimeStock < material.safeStock) {
+                    status = '偏低';
+                } else if (realTimeStock < material.safeStock * 1.5) {
+                    status = '正常';
+                }
+                
+                return `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${material.id}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material.name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${(material.todayInStock || 0).toFixed(1)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${realTimeStock.toFixed(1)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material.safeStock.toFixed(1)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material.unitCost.toFixed(2)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${realTimeValue.toFixed(2)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(status)}">
+                                ${status}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <a href="#" class="text-blue-600 hover:text-blue-900 mr-3" onclick="editMaterial(${material.id});">编辑</a>
+                            <a href="#" class="text-red-600 hover:text-red-900" onclick="deleteMaterial(${material.id});">删除</a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
             
             // 同时更新库存汇总表
             updateInventorySummary();
