@@ -57,13 +57,11 @@
     <nav class="bg-primary text-white shadow-md">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-2">
-                <i class="fa fa-leaf text-2xl"></i>
+                <i class="fa fa-bug text-2xl"></i>
                 <h1 class="text-xl font-bold">黑水虻养殖管理系统</h1>
             </div>
             <div class="flex items-center space-x-4">
-                <button id="theme-toggle" class="p-2 rounded-full hover:bg-blue-700 transition-all">
-                    <i class="fa fa-moon-o"></i>
-                </button>
+
                 <div class="relative">
                     <button id="user-menu" class="flex items-center space-x-1 p-2 rounded hover:bg-blue-700 transition-all">
                         <span>管理员</span>
@@ -95,17 +93,17 @@
                     <button class="tab-button active py-4 px-6 border-b-2 border-blue-500 text-blue-600 font-medium text-sm" data-tab="overview">
                         <i class="fa fa-dashboard mr-2"></i>首页
                     </button>
+                    <button class="tab-button py-4 px-6 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm" data-tab="materials">
+                        <i class="fa fa-cubes mr-2"></i>饲料管理
+                    </button>
                     <button class="tab-button py-4 px-6 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm" data-tab="breeding">
                         <i class="fa fa-bug mr-2"></i>种虫养殖
                     </button>
                     <button class="tab-button py-4 px-6 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm" data-tab="hatching">
                         <i class="fa fa-egg mr-2"></i>虫卵孵化
                     </button>
-                    <button class="tab-button py-4 px-6 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm" data-tab="materials">
-                        <i class="fa fa-cubes mr-2"></i>饲料管理
-                    </button>
                     <button class="tab-button py-4 px-6 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm" data-tab="analysis">
-                        <i class="fa fa-bar-chart mr-2"></i>数据统计
+                        <i class="fa fa-bar-chart mr-2"></i>数据分析
                     </button>
                     <button class="tab-button py-4 px-6 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm" data-tab="reports">
                         <i class="fa fa-file-text mr-2"></i>报表统计
@@ -3506,6 +3504,11 @@
                     this.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
                     
                     document.getElementById(`${tabId}-tab`).classList.remove('hidden');
+                    
+                    // 当切换到原料管理选项卡时，更新原料库存表格
+                    if (tabId === 'materials') {
+                        updateMaterialsTable();
+                    }
                 });
             });
             
@@ -3892,21 +3895,6 @@
             document.getElementById('download-report-1').addEventListener('click', function(e) {
                 e.preventDefault();
                 downloadHistoricalReport(1);
-            });
-            
-            // 管理员菜单下拉
-            document.getElementById('user-menu').addEventListener('click', function() {
-                const dropdown = document.getElementById('user-dropdown');
-                dropdown.classList.toggle('hidden');
-            });
-            
-            // 点击其他地方关闭下拉菜单
-            document.addEventListener('click', function(e) {
-                const userMenu = document.getElementById('user-menu');
-                const dropdown = document.getElementById('user-dropdown');
-                if (!userMenu.contains(e.target) && !dropdown.contains(e.target)) {
-                    dropdown.classList.add('hidden');
-                }
             });
             
             // 登录按钮点击事件
