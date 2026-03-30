@@ -94,7 +94,7 @@
                         <i class="fa fa-dashboard mr-2"></i>首页
                     </button>
                     <button class="tab-button py-4 px-6 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm" data-tab="materials">
-                        <i class="fa fa-cubes mr-2"></i>饲料管理
+                        <i class="fa fa-cubes mr-2"></i>原料管理
                     </button>
                     <button class="tab-button py-4 px-6 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm" data-tab="breeding">
                         <i class="fa fa-bug mr-2"></i>种虫养殖
@@ -3050,22 +3050,77 @@
         
         // 初始化图表
         function initCharts() {
+            // 生成最近一周的日期标签
+            const labels = [];
+            const today = new Date();
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                const month = date.getMonth() + 1;
+                const day = date.getDate();
+                labels.push(`${month}-${day}`);
+            }
+            
+            // 汇总养殖数据
+            const feedingData = [];
+            const outputData = [];
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                
+                // 汇总当天的投料量
+                const dayFeeding = feedingRecords.filter(record => 
+                    record.time.startsWith(dateStr)
+                ).reduce((sum, record) => sum + record.amount, 0);
+                feedingData.push(dayFeeding);
+                
+                // 汇总当天的产出量
+                const dayOutput = outputRecords.filter(record => 
+                    record.time.startsWith(dateStr)
+                ).reduce((sum, record) => sum + record.amount, 0);
+                outputData.push(dayOutput);
+            }
+            
+            // 汇总孵化数据
+            const larvaeData = [];
+            const eggData = [];
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                
+                // 汇总当天的幼虫数量
+                const dayLarvae = larvaeRecords.filter(record => 
+                    record.time.startsWith(dateStr)
+                ).reduce((sum, record) => sum + record.amount, 0);
+                larvaeData.push(dayLarvae);
+                
+                // 汇总当天的虫卵产出
+                const dayEggs = eggOutputRecords.filter(record => 
+                    record.time.startsWith(dateStr)
+                ).reduce((sum, record) => sum + record.amount, 0);
+                eggData.push(dayEggs);
+            }
+            
             // 养殖趋势图
             const breedingCtx = document.getElementById('breeding-chart').getContext('2d');
             new Chart(breedingCtx, {
                 type: 'line',
                 data: {
-                    labels: ['7-14', '7-15', '7-16', '7-17', '7-18', '7-19', '7-20'],
+                    labels: labels,
                     datasets: [{
                         label: '投料量 (kg)',
-                        data: [45, 52, 48, 56, 60, 55, 52.5],
+                        data: feedingData,
                         borderColor: 'rgb(59, 130, 246)',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
                         tension: 0.3,
                         fill: true
                     }, {
                         label: '产出量 (kg)',
-                        data: [0, 0, 0, 0, 0, 0, 8.5],
+                        data: outputData,
                         borderColor: 'rgb(16, 185, 129)',
                         backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         tension: 0.3,
@@ -3096,17 +3151,17 @@
             new Chart(hatchingCtx, {
                 type: 'line',
                 data: {
-                    labels: ['7-14', '7-15', '7-16', '7-17', '7-18', '7-19', '7-20'],
+                    labels: labels,
                     datasets: [{
-                        label: '种虫入厂 (kg)',
-                        data: [0, 0, 0, 0, 0, 0, 1000],
+                        label: '种虫入厂 (g)',
+                        data: larvaeData,
                         borderColor: 'rgb(139, 92, 246)',
                         backgroundColor: 'rgba(139, 92, 246, 0.1)',
                         tension: 0.3,
                         fill: true
                     }, {
-                        label: '虫卵产出 (kg)',
-                        data: [4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 5.0],
+                        label: '虫卵产出 (g)',
+                        data: eggData,
                         borderColor: 'rgb(245, 158, 11)',
                         backgroundColor: 'rgba(245, 158, 11, 0.1)',
                         tension: 0.3,
@@ -3900,6 +3955,7 @@
             // 登录按钮点击事件
             document.getElementById('login').addEventListener('click', function(e) {
                 e.preventDefault();
+                e.stopPropagation(); // 阻止事件冒泡
                 const loginForm = `
                     <form>
                         <div class="mb-4">
@@ -3918,6 +3974,7 @@
             // 注册按钮点击事件
             document.getElementById('register').addEventListener('click', function(e) {
                 e.preventDefault();
+                e.stopPropagation(); // 阻止事件冒泡
                 const registerForm = `
                     <form>
                         <div class="mb-4">
@@ -3936,6 +3993,7 @@
             // 退出登录按钮点击事件
             document.getElementById('logout').addEventListener('click', function(e) {
                 e.preventDefault();
+                e.stopPropagation(); // 阻止事件冒泡
                 if (confirm('确定要退出登录吗？')) {
                     alert('您已成功退出登录！');
                     // 实际应用中，这里应该清除登录状态并跳转到登录页面
