@@ -256,7 +256,7 @@
                 <!-- 原料统计 -->
                 <div id="materials-tab" class="tab-content hidden">
                     <div class="mb-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-4">原料统计管理</h2>
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">原料管理</h2>
                         
                         <!-- 原料统计子选项卡 -->
                         <div class="border-b border-gray-200 mb-4">
@@ -296,8 +296,7 @@
                                     <div>
                                         <select id="material-category-filter" class="border rounded-md px-3 py-2 text-sm">
                                             <option value="">所有类别</option>
-                                            <option value="饲料">饲料</option>
-                                            <option value="添加剂">添加剂</option>
+                                            <option value="餐厨渣料">餐厨渣料</option>
                                             <option value="其他">其他</option>
                                         </select>
                                     </div>
@@ -6975,6 +6974,7 @@
             const newMaterial = {
                 id: materials.length > 0 ? Math.max(...materials.map(m => m.id)) + 1 : 1,
                 name: name,
+                category: name, // 使用名称作为类别
                 stock: stock,
                 todayInStock: todayInStock,
                 safeStock: safeStock,
@@ -7035,6 +7035,7 @@
                 materials[materialIndex] = {
                     ...materials[materialIndex],
                     name: name,
+                    category: name, // 使用名称作为类别
                     stock: stock,
                     todayInStock: todayInStock,
                     safeStock: safeStock,
@@ -7659,9 +7660,14 @@
             `).join('');
             
             // 更新库存汇总
-            document.getElementById('total-material-types').textContent = materials.length;
+            // 计算原料种类（基于类别个数）
+            const categories = [...new Set(materials.map(m => m.category))];
+            document.getElementById('total-material-types').textContent = categories.length;
+            // 计算总库存量
             document.getElementById('total-stock').textContent = materials.reduce((sum, m) => sum + m.stock, 0).toFixed(1);
+            // 计算库存总价值
             document.getElementById('total-value').textContent = materials.reduce((sum, m) => sum + m.value, 0).toFixed(2);
+            // 计算库存预警
             document.getElementById('warning-count').textContent = materials.filter(m => m.status === '紧缺' || m.status === '偏低').length;
         }
         
