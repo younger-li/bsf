@@ -6402,8 +6402,6 @@
         function getMaterialForm(material = null) {
             const id = material ? material.id : '';
             const name = material ? material.name : '餐厨渣料';
-            const stock = material ? material.stock : '';
-            const safeStock = material ? material.safeStock : '';
             const unitCost = material ? material.unitCost : '';
             const todayInStock = material ? (material.todayInStock || '') : '';
             
@@ -6419,14 +6417,6 @@
                     <div class="mb-4">
                         <label for="material-today-in-stock" class="block text-sm font-medium text-gray-700 mb-1">今日入库 (kg)</label>
                         <input type="number" id="material-today-in-stock" value="${todayInStock}" step="0.1" min="0" class="w-full border rounded-md px-3 py-2 text-sm" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="material-stock" class="block text-sm font-medium text-gray-700 mb-1">当前库存 (kg)</label>
-                        <input type="number" id="material-stock" value="${stock}" step="0.1" min="0" class="w-full border rounded-md px-3 py-2 text-sm" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="material-safe-stock" class="block text-sm font-medium text-gray-700 mb-1">安全库存 (kg)</label>
-                        <input type="number" id="material-safe-stock" value="${safeStock}" step="0.1" min="0" class="w-full border rounded-md px-3 py-2 text-sm" required>
                     </div>
                     <div class="mb-4">
                         <label for="material-unit-cost" class="block text-sm font-medium text-gray-700 mb-1">单位成本 (元/kg)</label>
@@ -7000,9 +6990,12 @@
         function addMaterial() {
             const name = document.getElementById('material-name').value;
             const todayInStock = parseFloat(document.getElementById('material-today-in-stock').value);
-            const stock = parseFloat(document.getElementById('material-stock').value);
-            const safeStock = parseFloat(document.getElementById('material-safe-stock').value);
             const unitCost = parseFloat(document.getElementById('material-unit-cost').value);
+            
+            // 新原料的初始库存设为今日入库量
+            const stock = todayInStock;
+            // 安全库存设为默认值（今日入库量的一半）
+            const safeStock = todayInStock * 0.5;
             
             const value = (stock * unitCost).toFixed(2);
             let status = '充足';
@@ -7059,37 +7052,43 @@
             const materialId = parseInt(document.getElementById('edit-material-id').value);
             const name = document.getElementById('material-name').value;
             const todayInStock = parseFloat(document.getElementById('material-today-in-stock').value);
-            const stock = parseFloat(document.getElementById('material-stock').value);
-            const safeStock = parseFloat(document.getElementById('material-safe-stock').value);
             const unitCost = parseFloat(document.getElementById('material-unit-cost').value);
             
-            const value = (stock * unitCost).toFixed(2);
-            let status = '充足';
-            if (stock < safeStock * 0.5) {
-                status = '紧缺';
-            } else if (stock < safeStock) {
-                status = '偏低';
-            } else if (stock < safeStock * 1.5) {
-                status = '正常';
-            }
-            
-            const materialIndex = materials.findIndex(m => m.id === materialId);
-            if (materialIndex !== -1) {
-                materials[materialIndex] = {
-                    ...materials[materialIndex],
-                    name: name,
-                    category: name, // 使用名称作为类别
-                    stock: stock,
-                    todayInStock: todayInStock,
-                    safeStock: safeStock,
-                    unitCost: unitCost,
-                    value: parseFloat(value),
-                    status: status
-                };
+            const material = materials.find(m => m.id === materialId);
+            if (material) {
+                // 计算新的库存（原有库存 + 今日入库）
+                const stock = material.stock + todayInStock;
+                // 安全库存保持不变
+                const safeStock = material.safeStock;
                 
-                updateMaterialsTable();
+                const value = (stock * unitCost).toFixed(2);
+                let status = '充足';
+                if (stock < safeStock * 0.5) {
+                    status = '紧缺';
+                } else if (stock < safeStock) {
+                    status = '偏低';
+                } else if (stock < safeStock * 1.5) {
+                    status = '正常';
+                }
                 
-                alert('原料编辑成功！');
+                const materialIndex = materials.findIndex(m => m.id === materialId);
+                if (materialIndex !== -1) {
+                    materials[materialIndex] = {
+                        ...materials[materialIndex],
+                        name: name,
+                        category: name, // 使用名称作为类别
+                        stock: stock,
+                        todayInStock: todayInStock,
+                        safeStock: safeStock,
+                        unitCost: unitCost,
+                        value: parseFloat(value),
+                        status: status
+                    };
+                    
+                    updateMaterialsTable();
+                    
+                    alert('原料编辑成功！');
+                }
             }
         }
         
