@@ -3099,7 +3099,7 @@
                 larvaeData.push(dayLarvae);
                 
                 // 汇总当天的虫卵产出
-                const dayEggs = eggOutputRecords.filter(record => 
+                const dayEggs = ovipositionOutRecords.filter(record => 
                     record.time.startsWith(dateStr)
                 ).reduce((sum, record) => sum + record.amount, 0);
                 eggData.push(dayEggs);
