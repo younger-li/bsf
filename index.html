@@ -70,8 +70,16 @@
                         <i class="fa fa-caret-down"></i>
                     </button>
                     <div id="user-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden">
-                        <a href="#" id="login" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">登录</a>
-                        <a href="#" id="register" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">注册</a>
+                        <a href="#" id="register" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="fa fa-user-plus mr-2"></i>注册
+                        </a>
+                        <a href="#" id="login" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="fa fa-sign-in mr-2"></i>登录
+                        </a>
+                        <div class="border-t border-gray-200 my-1"></div>
+                        <a href="#" id="logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="fa fa-sign-out mr-2"></i>退出登录
+                        </a>
                     </div>
                 </div>
             </div>
@@ -85,22 +93,22 @@
             <div class="border-b">
                 <nav class="flex -mb-px">
                     <button class="tab-button active py-4 px-6 border-b-2 border-blue-500 text-blue-600 font-medium text-sm" data-tab="overview">
-                        <i class="fa fa-dashboard mr-2"></i>系统概览
-                    </button>
-                    <button class="tab-button py-4 px-6 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm" data-tab="materials">
-                        <i class="fa fa-cubes mr-2"></i>原料统计
+                        <i class="fa fa-dashboard mr-2"></i>首页
                     </button>
                     <button class="tab-button py-4 px-6 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm" data-tab="breeding">
-                        <i class="fa fa-leaf mr-2"></i>种虫养殖
+                        <i class="fa fa-bug mr-2"></i>种虫养殖
                     </button>
                     <button class="tab-button py-4 px-6 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm" data-tab="hatching">
-                        <i class="fa fa-cogs mr-2"></i>虫卵孵化
+                        <i class="fa fa-egg mr-2"></i>虫卵孵化
+                    </button>
+                    <button class="tab-button py-4 px-6 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm" data-tab="materials">
+                        <i class="fa fa-cubes mr-2"></i>饲料管理
                     </button>
                     <button class="tab-button py-4 px-6 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm" data-tab="analysis">
-                        <i class="fa fa-bar-chart mr-2"></i>数据分析
+                        <i class="fa fa-box mr-2"></i>收获管理
                     </button>
                     <button class="tab-button py-4 px-6 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm" data-tab="reports">
-                        <i class="fa fa-file-text mr-2"></i>报表中心
+                        <i class="fa fa-file-text mr-2"></i>报表统计
                     </button>
                 </nav>
             </div>
@@ -3957,7 +3965,17 @@
                 `;
                 openModal('注册', registerForm, 'register');
             });
-            
+
+            // 退出登录按钮点击事件
+            document.getElementById('logout').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('确定要退出登录吗？')) {
+                    alert('您已成功退出登录！');
+                    // 实际应用中，这里应该清除登录状态并跳转到登录页面
+                    // window.location.href = 'login.html';
+                }
+            });
+
             // 导出库存按钮
             document.getElementById('export-inventory').addEventListener('click', function() {
                 alert('此功能已删除');
