@@ -312,6 +312,11 @@
                                             <option value="紧缺">紧缺</option>
                                         </select>
                                     </div>
+                                    <div>
+                                        <button id="material-search-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm">
+                                            查询
+                                        </button>
+                                    </div>
                                 </div>
                                 
                                 <!-- 库存汇总表 -->
@@ -357,28 +362,7 @@
                                     <h3 class="text-lg font-medium text-gray-800">库存明细</h3>
                                 </div>
                                 
-                                <!-- 搜索和筛选 -->
-                                <div class="flex flex-col md:flex-row gap-4 mb-6">
-                                    <div class="flex-1">
-                                        <input type="text" id="material-search" placeholder="搜索原料名称或编号" class="w-full border rounded-md px-3 py-2 text-sm">
-                                    </div>
-                                    <div>
-                                        <select id="material-category-filter" class="border rounded-md px-3 py-2 text-sm">
-                                            <option value="">所有类别</option>
-                                            <option value="餐厨渣料">餐厨渣料</option>
-                                            <option value="其他">其他</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <select id="material-stock-filter" class="border rounded-md px-3 py-2 text-sm">
-                                            <option value="">库存状态</option>
-                                            <option value="充足">充足</option>
-                                            <option value="正常">正常</option>
-                                            <option value="偏低">偏低</option>
-                                            <option value="紧缺">紧缺</option>
-                                        </select>
-                                    </div>
-                                </div>
+
                                 
                                 <!-- 原料库存明细表格 -->
                                 <div class="overflow-x-auto">
@@ -430,9 +414,6 @@
                                     <div class="flex space-x-2">
                                         <button id="add-usage-record" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
                                             <i class="fa fa-plus mr-2"></i>添加使用记录
-                                        </button>
-                                        <button id="generate-usage-report" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
-                                            <i class="fa fa-file-text mr-2"></i>生成使用报表
                                         </button>
                                     </div>
                                 </div>
@@ -558,20 +539,22 @@
                                     </div>
                                 </div>
                                 
-                                <!-- 图表区域 -->
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                    <div>
-                                        <h4 class="text-md font-medium text-gray-800 mb-3">原料使用量分析</h4>
-                                        <div class="h-64">
-                                            <canvas id="materials-usage-chart"></canvas>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h4 class="text-md font-medium text-gray-800 mb-3">原料库存价值分析</h4>
-                                        <div class="h-64">
-                                            <canvas id="materials-value-chart"></canvas>
-                                        </div>
-                                    </div>
+                                <!-- 分析功能按钮 -->
+                                <div class="flex flex-wrap gap-4 mb-6">
+                                    <button id="analyze-usage" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
+                                        <i class="fa fa-bar-chart mr-2"></i>原料使用量分析
+                                    </button>
+                                    <button id="analyze-inventory" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
+                                        <i class="fa fa-database mr-2"></i>原料入库统计分析
+                                    </button>
+                                    <button id="analyze-value" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
+                                        <i class="fa fa-line-chart mr-2"></i>原料库存价值分析
+                                    </button>
+                                </div>
+                                
+                                <!-- 分析结果区域 -->
+                                <div id="analysis-result" class="mb-6">
+                                    <!-- 分析结果将通过JavaScript动态添加 -->
                                 </div>
                                 
                                 <!-- 原料使用排行 -->
@@ -656,9 +639,7 @@
                                 <button class="breeding-tab-button py-2 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm" data-breeding-tab="output">
                                     产出管理
                                 </button>
-                                <button class="breeding-tab-button py-2 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm" data-breeding-tab="statistics">
-                                    统计报表
-                                </button>
+
                             </nav>
                         </div>
                         
@@ -699,89 +680,29 @@
                                     </div>
                                 </div>
                                 
-                                <!-- 养殖池列表 -->
-                                <div class="overflow-x-auto">
-                                    <table class="min-w-full divide-y divide-gray-200">
-                                        <thead class="bg-gray-50">
-                                            <tr>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    池编号
-                                                </th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    长度 (m)
-                                                </th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    宽度 (m)
-                                                </th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    面积 (m²)
-                                                </th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    位置
-                                                </th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    状态
-                                                </th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    操作
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="bg-white divide-y divide-gray-200" id="pools-table-body">
-                                            <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                    1
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    2.0
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    3.0
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    6.0
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    A区
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                        使用中
-                                                    </span>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                    <a href="#" class="text-blue-600 hover:text-blue-900 mr-3">编辑</a>
-                                                    <a href="#" class="text-red-600 hover:text-red-900">删除</a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                    2
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    2.0
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    3.0
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    6.0
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    A区
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                        使用中
-                                                    </span>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                    <a href="#" class="text-blue-600 hover:text-blue-900 mr-3">编辑</a>
-                                                    <a href="#" class="text-red-600 hover:text-red-900">删除</a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <!-- 养殖池详细信息 -->
+                                <div id="pool-detail" class="mt-6 p-4 bg-white border rounded-lg hidden">
+                                    <h4 class="text-md font-medium text-gray-800 mb-4">养殖池详细信息</h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <p class="text-sm text-gray-500">池编号: <span id="detail-pool-id" class="font-medium text-gray-800"></span></p>
+                                            <p class="text-sm text-gray-500">长度: <span id="detail-pool-length" class="font-medium text-gray-800"></span> m</p>
+                                            <p class="text-sm text-gray-500">宽度: <span id="detail-pool-width" class="font-medium text-gray-800"></span> m</p>
+                                            <p class="text-sm text-gray-500">面积: <span id="detail-pool-area" class="font-medium text-gray-800"></span> m²</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-gray-500">位置: <span id="detail-pool-location" class="font-medium text-gray-800"></span></p>
+                                            <p class="text-sm text-gray-500">状态: <span id="detail-pool-status" class="font-medium text-gray-800"></span></p>
+                                            <div class="mt-4">
+                                                <button id="edit-pool-detail" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm mr-2">
+                                                    编辑
+                                                </button>
+                                                <button id="delete-pool-detail" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm">
+                                                    删除
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -794,9 +715,6 @@
                                     <div class="flex space-x-2">
                                         <button id="add-feeding-record" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
                                             <i class="fa fa-plus mr-2"></i>添加投料记录
-                                        </button>
-                                        <button id="generate-feeding-report" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
-                                            <i class="fa fa-file-text mr-2"></i>生成日报表
                                         </button>
                                     </div>
                                 </div>
@@ -917,9 +835,6 @@
                                     <div class="flex space-x-2">
                                         <button id="add-output-record" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
                                             <i class="fa fa-plus mr-2"></i>添加产出记录
-                                        </button>
-                                        <button id="generate-output-report" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
-                                            <i class="fa fa-file-text mr-2"></i>生成产出报表
                                         </button>
                                     </div>
                                 </div>
@@ -1223,9 +1138,7 @@
                                 <button class="hatching-tab-button py-2 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm" data-hatching-tab="oviposition">
                                     产卵管理
                                 </button>
-                                <button class="hatching-tab-button py-2 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm" data-hatching-tab="statistics">
-                                    统计报表
-                                </button>
+
                             </nav>
                         </div>
                         
@@ -1477,6 +1390,9 @@
                                                     种虫数量 (kg)
                                                 </th>
                                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    培育池编号
+                                                </th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                     种虫来源
                                                 </th>
                                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -1549,9 +1465,6 @@
                                 <div class="flex justify-between items-center mb-6">
                                     <h3 class="text-lg font-medium text-gray-800">育蛹管理</h3>
                                     <div class="flex space-x-2">
-                                        <button id="add-pupa-in-record" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
-                                            <i class="fa fa-plus mr-2"></i>添加进蛹记录
-                                        </button>
                                         <button id="add-pupa-out-record" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
                                             <i class="fa fa-plus mr-2"></i>添加出蛹记录
                                         </button>
@@ -1565,63 +1478,6 @@
                                 </div>
                                 
                                 <!-- 育蛹记录表格 -->
-                                <div class="overflow-x-auto mb-6">
-                                    <h4 class="text-md font-medium text-gray-800 mb-3">进蛹记录</h4>
-                                    <table class="min-w-full divide-y divide-gray-200">
-                                        <thead class="bg-gray-50">
-                                            <tr>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    池编号
-                                                </th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    进蛹时间
-                                                </th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    进蛹数量 (kg)
-                                                </th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    面积 (m²)
-                                                </th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    操作人
-                                                </th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    备注
-                                                </th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    操作
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="bg-white divide-y divide-gray-200">
-                                            <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                    1
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    2023-07-20 10:30
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    500.0
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    3.0
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    李工
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    正常进蛹
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                    <a href="#" class="text-blue-600 hover:text-blue-900 mr-3">编辑</a>
-                                                    <a href="#" class="text-red-600 hover:text-red-900">删除</a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                
                                 <div class="overflow-x-auto">
                                     <h4 class="text-md font-medium text-gray-800 mb-3">出蛹记录</h4>
                                     <table class="min-w-full divide-y divide-gray-200">
@@ -1866,161 +1722,7 @@
                         </div>
                         
                         <!-- 统计报表 -->
-                        <div id="statistics-hatching-tab" class="hatching-tab-content hidden">
-                            <div class="bg-white rounded-lg shadow-md p-6">
-                                <div class="flex justify-between items-center mb-6">
-                                    <h3 class="text-lg font-medium text-gray-800">统计报表</h3>
-                                    <div class="flex space-x-2">
-                                        <button id="search-hatching-report" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
-                                            <i class="fa fa-search mr-2"></i>查询
-                                        </button>
-                                        <button id="generate-hatching-weekly-report" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
-                                            <i class="fa fa-calendar mr-2"></i>生成周报
-                                        </button>
-                                        <button id="generate-hatching-monthly-report" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md text-sm flex items-center">
-                                            <i class="fa fa-calendar-check-o mr-2"></i>生成月报
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                                <!-- 报表类型选择 -->
-                                <div class="mb-6">
-                                    <label for="hatching-report-type" class="block text-sm font-medium text-gray-700 mb-2">报表类型</label>
-                                    <select id="hatching-report-type" class="border rounded-md px-3 py-2 text-sm w-full md:w-1/3">
-                                        <option value="weekly">周报表</option>
-                                        <option value="monthly">月报表</option>
-                                        <option value="custom">自定义报表</option>
-                                    </select>
-                                </div>
-                                
-                                <!-- 日期范围选择 -->
-                                <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label for="hatching-start-date" class="block text-sm font-medium text-gray-700 mb-2">开始日期</label>
-                                        <input type="date" id="hatching-start-date" class="border rounded-md px-3 py-2 text-sm w-full">
-                                    </div>
-                                    <div>
-                                        <label for="hatching-end-date" class="block text-sm font-medium text-gray-700 mb-2">结束日期</label>
-                                        <input type="date" id="hatching-end-date" class="border rounded-md px-3 py-2 text-sm w-full">
-                                    </div>
-                                </div>
-                                
-                                <!-- 报表内容 -->
-                                <div class="border rounded-lg p-4">
-                                    <h4 class="text-md font-medium text-gray-800 mb-4">本周孵化情况表 (2023-07-16 至 2023-07-22)</h4>
-                                    
-                                    <!-- 孵化情况表格 -->
-                                    <div class="overflow-x-auto mb-6">
-                                        <table class="min-w-full divide-y divide-gray-200">
-                                            <thead class="bg-gray-50">
-                                                <tr>
-                                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        项目
-                                                    </th>
-                                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        数量
-                                                    </th>
-                                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        上周数量
-                                                    </th>
-                                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        同比增长
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="bg-white divide-y divide-gray-200">
-                                                <tr>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                        种虫入厂量 (kg)
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                        1000.0
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                        800.0
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500">
-                                                        +25.0%
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                        进蛹量 (kg)
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                        500.0
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                        450.0
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500">
-                                                        +11.1%
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                        出蛹量 (kg)
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                        450.0
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                        400.0
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500">
-                                                        +12.5%
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                        虫卵产出量 (kg)
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                        5.0
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                        4.5
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500">
-                                                        +11.1%
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                        虫卵比
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                        1.11%
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                        1.13%
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-500">
-                                                        -0.02%
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    
-                                    <!-- 汇总图表 -->
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div>
-                                            <h5 class="text-sm font-medium text-gray-700 mb-3">孵化各阶段数量对比</h5>
-                                            <div class="h-64">
-                                                <canvas id="hatching-stages-chart"></canvas>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h5 class="text-sm font-medium text-gray-700 mb-3">虫卵比趋势</h5>
-                                            <div class="h-64">
-                                                <canvas id="egg-ratio-chart"></canvas>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
 
@@ -3681,11 +3383,120 @@
             document.addEventListener('click', function(event) {
                 const userMenu = document.getElementById('user-menu');
                 const userDropdown = document.getElementById('user-dropdown');
-                
                 if (!userMenu.contains(event.target) && !userDropdown.contains(event.target)) {
                     userDropdown.classList.add('hidden');
                 }
             });
+            
+            // 原料库存查询按钮
+            const materialSearchBtn = document.getElementById('material-search-btn');
+            if (materialSearchBtn) {
+                materialSearchBtn.addEventListener('click', function() {
+                    updateMaterialsTable();
+                });
+            }
+            
+            // 原料使用量分析按钮
+            const analyzeUsageBtn = document.getElementById('analyze-usage');
+            if (analyzeUsageBtn) {
+                analyzeUsageBtn.addEventListener('click', function() {
+                    const startDate = document.getElementById('analysis-start-date').value;
+                    const endDate = document.getElementById('analysis-end-date').value;
+                    analyzeMaterialsUsage(startDate, endDate);
+                });
+            }
+            
+            // 原料入库统计分析按钮
+            const analyzeInventoryBtn = document.getElementById('analyze-inventory');
+            if (analyzeInventoryBtn) {
+                analyzeInventoryBtn.addEventListener('click', function() {
+                    const startDate = document.getElementById('analysis-start-date').value;
+                    const endDate = document.getElementById('analysis-end-date').value;
+                    analyzeMaterialsInventory(startDate, endDate);
+                });
+            }
+            
+            // 原料库存价值分析按钮
+            const analyzeValueBtn = document.getElementById('analyze-value');
+            if (analyzeValueBtn) {
+                analyzeValueBtn.addEventListener('click', function() {
+                    const startDate = document.getElementById('analysis-start-date').value;
+                    const endDate = document.getElementById('analysis-end-date').value;
+                    analyzeMaterialsValue(startDate, endDate);
+                });
+            }
+            
+            // 养殖池点击事件
+            document.querySelectorAll('.pool-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const poolId = parseInt(this.dataset.poolId);
+                    showPoolDetail(poolId);
+                });
+            });
+            
+            // 编辑养殖池按钮
+            const editPoolDetailBtn = document.getElementById('edit-pool-detail');
+            if (editPoolDetailBtn) {
+                editPoolDetailBtn.addEventListener('click', function() {
+                    const poolId = parseInt(document.getElementById('detail-pool-id').textContent);
+                    editPool(poolId);
+                });
+            }
+            
+            // 删除养殖池按钮
+            const deletePoolDetailBtn = document.getElementById('delete-pool-detail');
+            if (deletePoolDetailBtn) {
+                deletePoolDetailBtn.addEventListener('click', function() {
+                    const poolId = parseInt(document.getElementById('detail-pool-id').textContent);
+                    deletePool(poolId);
+                });
+            }
+            
+            // 投料管理日期选择器
+            const feedingDateInput = document.getElementById('feeding-date');
+            if (feedingDateInput) {
+                feedingDateInput.addEventListener('change', function() {
+                    const selectedDate = this.value;
+                    updateFeedingTable(selectedDate);
+                });
+            }
+            
+            // 产出管理日期选择器
+            const outputDateInput = document.getElementById('output-date');
+            if (outputDateInput) {
+                outputDateInput.addEventListener('change', function() {
+                    const selectedDate = this.value;
+                    updateOutputTable(selectedDate);
+                });
+            }
+            
+            // 种虫入厂日期选择器
+            const larvaeDateInput = document.getElementById('larvae-date');
+            if (larvaeDateInput) {
+                larvaeDateInput.addEventListener('change', function() {
+                    const selectedDate = this.value;
+                    updateLarvaeTable(selectedDate);
+                });
+            }
+            
+            // 育蛹管理日期选择器
+            const pupaDateInput = document.getElementById('pupa-date');
+            if (pupaDateInput) {
+                pupaDateInput.addEventListener('change', function() {
+                    const selectedDate = this.value;
+                    updatePupaOutTable(selectedDate);
+                });
+            }
+            
+            // 产卵管理日期选择器
+            const ovipositionDateInput = document.getElementById('oviposition-date');
+            if (ovipositionDateInput) {
+                ovipositionDateInput.addEventListener('change', function() {
+                    const selectedDate = this.value;
+                    updateOvipositionInTable(selectedDate);
+                    updateOvipositionOutTable(selectedDate);
+                });
+            }
             
             // 模态框相关事件
             document.getElementById('close-modal').addEventListener('click', closeModal);
@@ -3900,6 +3711,11 @@
                     this.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
                     
                     document.getElementById(`${tabId}-materials-tab`).classList.remove('hidden');
+                    
+                    // 当切换到使用记录选项卡时，默认显示当天记录
+                    if (tabId === 'usage') {
+                        updateUsageTable();
+                    }
                 });
             });
             
@@ -4174,35 +3990,9 @@
             
             // 查询使用记录按钮
             document.getElementById('search-usage-records').addEventListener('click', function() {
-                const searchTerm = document.getElementById('usage-search').value.toLowerCase();
-                const materialFilter = document.getElementById('usage-material-filter').value;
-                
-                // 筛选记录
-                const filteredRecords = usageRecords.filter(record => {
-                    const matchesSearch = record.materialName.toLowerCase().includes(searchTerm);
-                    const matchesFilter = !materialFilter || record.materialName === materialFilter;
-                    return matchesSearch && matchesFilter;
-                });
-                
-                // 更新表格
-                const tableBody = document.getElementById('usage-table-body');
-                if (tableBody) {
-                    tableBody.innerHTML = filteredRecords.map(record => `
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.id}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.materialName}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.date}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.amount}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.department}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.operator}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.notes}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="#" class="text-blue-600 hover:text-blue-900 mr-3" onclick="editUsageRecord(${record.id})">编辑</a>
-                                <a href="#" class="text-red-600 hover:text-red-900" onclick="deleteUsageRecord(${record.id})">删除</a>
-                            </td>
-                        </tr>
-                    `).join('');
-                }
+                const startDate = document.getElementById('usage-start-date').value;
+                const endDate = document.getElementById('usage-end-date').value;
+                updateUsageTable(startDate, endDate);
             });
         }
         
@@ -6175,6 +5965,7 @@
             const id = record ? record.id : '';
             const time = record ? record.time : new Date().toISOString().slice(0, 16).replace('T', ' ');
             const amount = record ? record.amount : '';
+            const incubatorId = record ? record.incubatorId : '';
             const source = record ? record.source : '本场培育';
             const grade = record ? record.grade : '一级';
             const operator = record ? record.operator : '王工';
@@ -6189,6 +5980,10 @@
                     <div class="mb-4">
                         <label for="larvae-amount" class="block text-sm font-medium text-gray-700 mb-1">种虫数量 (kg)</label>
                         <input type="number" id="larvae-amount" value="${amount}" step="0.1" min="0" class="w-full border rounded-md px-3 py-2 text-sm" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="larvae-incubator-id" class="block text-sm font-medium text-gray-700 mb-1">培育池编号</label>
+                        <input type="text" id="larvae-incubator-id" value="${incubatorId}" class="w-full border rounded-md px-3 py-2 text-sm" required>
                     </div>
                     <div class="mb-4">
                         <label for="larvae-source" class="block text-sm font-medium text-gray-700 mb-1">种虫来源</label>
@@ -6725,6 +6520,7 @@
         function addLarvaeRecord() {
             const time = document.getElementById('larvae-time').value.replace('T', ' ');
             const amount = parseFloat(document.getElementById('larvae-amount').value);
+            const incubatorId = document.getElementById('larvae-incubator-id').value;
             const source = document.getElementById('larvae-source').value;
             const grade = document.getElementById('larvae-grade').value;
             const operator = document.getElementById('larvae-operator').value;
@@ -6734,6 +6530,7 @@
                 id: larvaeRecords.length > 0 ? Math.max(...larvaeRecords.map(r => r.id)) + 1 : 1,
                 time: time,
                 amount: amount,
+                incubatorId: incubatorId,
                 source: source,
                 grade: grade,
                 operator: operator,
@@ -6751,6 +6548,7 @@
             const recordId = parseInt(document.getElementById('edit-larvae-id').value);
             const time = document.getElementById('larvae-time').value.replace('T', ' ');
             const amount = parseFloat(document.getElementById('larvae-amount').value);
+            const incubatorId = document.getElementById('larvae-incubator-id').value;
             const source = document.getElementById('larvae-source').value;
             const grade = document.getElementById('larvae-grade').value;
             const operator = document.getElementById('larvae-operator').value;
@@ -6762,6 +6560,7 @@
                     ...larvaeRecords[recordIndex],
                     time: time,
                     amount: amount,
+                    incubatorId: incubatorId,
                     source: source,
                     grade: grade,
                     operator: operator,
@@ -7231,14 +7030,15 @@
         }
         
         // 更新投料记录表格
-        function updateFeedingTable() {
+        function updateFeedingTable(date = null) {
             const tableBody = document.getElementById('feeding-table-body');
             if (!tableBody) return;
             
-            const today = new Date().toISOString().split('T')[0];
-            const todayRecords = feedingRecords.filter(record => record.time.startsWith(today));
+            // 默认显示当天记录
+            const targetDate = date || new Date().toISOString().split('T')[0];
+            const filteredRecords = feedingRecords.filter(record => record.time.startsWith(targetDate));
             
-            tableBody.innerHTML = todayRecords.map(record => `
+            tableBody.innerHTML = filteredRecords.map(record => `
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.poolId}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.time}</td>
@@ -7255,14 +7055,15 @@
         }
         
         // 更新产出记录表格
-        function updateOutputTable() {
+        function updateOutputTable(date = null) {
             const tableBody = document.getElementById('output-table-body');
             if (!tableBody) return;
             
-            const today = new Date().toISOString().split('T')[0];
-            const todayRecords = outputRecords.filter(record => record.time.startsWith(today));
+            // 默认显示当天记录
+            const targetDate = date || new Date().toISOString().split('T')[0];
+            const filteredRecords = outputRecords.filter(record => record.time.startsWith(targetDate));
             
-            tableBody.innerHTML = todayRecords.map(record => `
+            tableBody.innerHTML = filteredRecords.map(record => `
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.poolId}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.time}</td>
@@ -7329,17 +7130,19 @@
         }
         
         // 更新种虫入厂记录表格
-        function updateLarvaeTable() {
+        function updateLarvaeTable(date = null) {
             const tableBody = document.querySelector('#larvae-hatching-tab tbody');
             if (!tableBody) return;
             
-            const today = new Date().toISOString().split('T')[0];
-            const todayRecords = larvaeRecords.filter(record => record.time.startsWith(today));
+            // 默认显示当天记录
+            const targetDate = date || new Date().toISOString().split('T')[0];
+            const filteredRecords = larvaeRecords.filter(record => record.time.startsWith(targetDate));
             
-            tableBody.innerHTML = todayRecords.map(record => `
+            tableBody.innerHTML = filteredRecords.map(record => `
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.time}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.amount}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.incubatorId || ''}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.source}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.grade}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.operator}</td>
@@ -7353,38 +7156,18 @@
         }
         
         // 更新进蛹记录表格
-        function updatePupaInTable() {
-            const tableBody = document.querySelectorAll('#pupa-hatching-tab tbody')[0];
-            if (!tableBody) return;
-            
-            const today = new Date().toISOString().split('T')[0];
-            const todayRecords = pupaInRecords.filter(record => record.time.startsWith(today));
-            
-            tableBody.innerHTML = todayRecords.map(record => `
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.incubatorId}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.time}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.amount}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.area}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.operator}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.notes}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <a href="#" class="text-blue-600 hover:text-blue-900 mr-3" onclick="editPupaInRecord(${record.id})">编辑</a>
-                        <a href="#" class="text-red-600 hover:text-red-900" onclick="deletePupaInRecord(${record.id})">删除</a>
-                    </td>
-                </tr>
-            `).join('');
-        }
+
         
         // 更新出蛹记录表格
-        function updatePupaOutTable() {
-            const tableBody = document.querySelectorAll('#pupa-hatching-tab tbody')[1];
+        function updatePupaOutTable(date = null) {
+            const tableBody = document.querySelector('#pupa-hatching-tab tbody');
             if (!tableBody) return;
             
-            const today = new Date().toISOString().split('T')[0];
-            const todayRecords = pupaOutRecords.filter(record => record.time.startsWith(today));
+            // 默认显示当天记录
+            const targetDate = date || new Date().toISOString().split('T')[0];
+            const filteredRecords = pupaOutRecords.filter(record => record.time.startsWith(targetDate));
             
-            tableBody.innerHTML = todayRecords.map(record => `
+            tableBody.innerHTML = filteredRecords.map(record => `
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.incubatorId}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.time}</td>
@@ -7401,14 +7184,15 @@
         }
         
         // 更新进产卵房记录表格
-        function updateOvipositionInTable() {
+        function updateOvipositionInTable(date = null) {
             const tableBody = document.querySelectorAll('#oviposition-hatching-tab tbody')[0];
             if (!tableBody) return;
             
-            const today = new Date().toISOString().split('T')[0];
-            const todayRecords = ovipositionInRecords.filter(record => record.time.startsWith(today));
+            // 默认显示当天记录
+            const targetDate = date || new Date().toISOString().split('T')[0];
+            const filteredRecords = ovipositionInRecords.filter(record => record.time.startsWith(targetDate));
             
-            tableBody.innerHTML = todayRecords.map(record => `
+            tableBody.innerHTML = filteredRecords.map(record => `
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.roomId}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.time}</td>
@@ -7425,14 +7209,15 @@
         }
         
         // 更新虫卵产出记录表格
-        function updateOvipositionOutTable() {
+        function updateOvipositionOutTable(date = null) {
             const tableBody = document.querySelectorAll('#oviposition-hatching-tab tbody')[1];
             if (!tableBody) return;
             
-            const today = new Date().toISOString().split('T')[0];
-            const todayRecords = ovipositionOutRecords.filter(record => record.time.startsWith(today));
+            // 默认显示当天记录
+            const targetDate = date || new Date().toISOString().split('T')[0];
+            const filteredRecords = ovipositionOutRecords.filter(record => record.time.startsWith(targetDate));
             
-            tableBody.innerHTML = todayRecords.map(record => `
+            tableBody.innerHTML = filteredRecords.map(record => `
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.roomId}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.time}</td>
@@ -7761,7 +7546,38 @@
             
             const today = new Date().toISOString().split('T')[0];
             
-            tableBody.innerHTML = materials.map(material => {
+            // 获取筛选条件
+            const categoryFilter = document.getElementById('material-category-filter')?.value || '';
+            const stockFilter = document.getElementById('material-stock-filter')?.value || '';
+            
+            // 筛选材料
+            const filteredMaterials = materials.filter(material => {
+                // 计算今日使用数量
+                const todayUsage = usageRecords.filter(record => 
+                    record.date === today && record.materialId === material.id
+                ).reduce((sum, record) => sum + record.amount, 0);
+                
+                // 计算实时库存
+                const realTimeStock = material.stock + (material.todayInStock || 0) - todayUsage;
+                
+                // 计算库存状态
+                let status = '充足';
+                if (realTimeStock < material.safeStock * 0.5) {
+                    status = '紧缺';
+                } else if (realTimeStock < material.safeStock) {
+                    status = '偏低';
+                } else if (realTimeStock < material.safeStock * 1.5) {
+                    status = '正常';
+                }
+                
+                // 应用筛选条件
+                const categoryMatch = !categoryFilter || material.category === categoryFilter;
+                const stockMatch = !stockFilter || status === stockFilter;
+                
+                return categoryMatch && stockMatch;
+            });
+            
+            tableBody.innerHTML = filteredMaterials.map(material => {
                 // 计算今日使用数量
                 const todayUsage = usageRecords.filter(record => 
                     record.date === today && record.materialId === material.id
@@ -7810,11 +7626,21 @@
         }
         
         // 更新使用记录表格
-        function updateUsageTable() {
+        function updateUsageTable(startDate = null, endDate = null) {
             const tableBody = document.getElementById('usage-table-body');
             if (!tableBody) return;
             
-            tableBody.innerHTML = usageRecords.map(record => `
+            // 默认显示当天记录
+            const today = new Date().toISOString().split('T')[0];
+            const start = startDate || today;
+            const end = endDate || today;
+            
+            // 筛选记录
+            const filteredRecords = usageRecords.filter(record => {
+                return record.date >= start && record.date <= end;
+            });
+            
+            tableBody.innerHTML = filteredRecords.map(record => `
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.id}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.materialName}</td>
@@ -7829,6 +7655,249 @@
                     </td>
                 </tr>
             `).join('');
+        }
+        
+        // 原料使用量分析
+        function analyzeMaterialsUsage(startDate, endDate) {
+            const resultDiv = document.getElementById('analysis-result');
+            if (!resultDiv) return;
+            
+            // 筛选日期范围内的使用记录
+            const filteredRecords = usageRecords.filter(record => {
+                return (!startDate || record.date >= startDate) && (!endDate || record.date <= endDate);
+            });
+            
+            if (filteredRecords.length === 0) {
+                resultDiv.innerHTML = `
+                    <div class="p-4 bg-yellow-50 rounded-lg">
+                        <p class="text-sm text-gray-700">所选日期范围内没有使用记录！</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 按原料名称分组汇总
+            const usageByMaterial = {};
+            filteredRecords.forEach(record => {
+                if (!usageByMaterial[record.materialName]) {
+                    usageByMaterial[record.materialName] = 0;
+                }
+                usageByMaterial[record.materialName] += record.amount;
+            });
+            
+            // 生成分析结果
+            let html = `
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="text-md font-medium text-gray-800 mb-4">原料使用量分析</h4>
+                    <div class="mb-4">
+                        <h5 class="text-sm font-medium text-gray-600 mb-2">使用明细</h5>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">原料名称</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">使用量 (kg)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+            `;
+            
+            let totalUsage = 0;
+            Object.entries(usageByMaterial).forEach(([material, amount]) => {
+                totalUsage += amount;
+                html += `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${amount.toFixed(1)}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h5 class="text-sm font-medium text-blue-800 mb-2">汇总情况</h5>
+                        <p class="text-sm text-gray-700">总使用量: <span class="font-medium">${totalUsage.toFixed(1)} kg</span></p>
+                        <p class="text-sm text-gray-700">原料种类: <span class="font-medium">${Object.keys(usageByMaterial).length} 种</span></p>
+                    </div>
+                </div>
+            `;
+            
+            resultDiv.innerHTML = html;
+        }
+        
+        // 原料入库统计分析
+        function analyzeMaterialsInventory(startDate, endDate) {
+            const resultDiv = document.getElementById('analysis-result');
+            if (!resultDiv) return;
+            
+            // 筛选日期范围内的入库记录（这里假设materials中的todayInStock是当天的入库量）
+            const today = new Date().toISOString().split('T')[0];
+            const filteredMaterials = materials.filter(material => {
+                // 这里简化处理，实际应该有单独的入库记录
+                return material.todayInStock > 0;
+            });
+            
+            if (filteredMaterials.length === 0) {
+                resultDiv.innerHTML = `
+                    <div class="p-4 bg-yellow-50 rounded-lg">
+                        <p class="text-sm text-gray-700">所选日期范围内没有入库记录！</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 按原料名称分组汇总
+            const inventoryByMaterial = {};
+            filteredMaterials.forEach(material => {
+                inventoryByMaterial[material.name] = material.todayInStock;
+            });
+            
+            // 生成分析结果
+            let html = `
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="text-md font-medium text-gray-800 mb-4">原料入库统计分析</h4>
+                    <div class="mb-4">
+                        <h5 class="text-sm font-medium text-gray-600 mb-2">入库明细</h5>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">原料名称</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">入库量 (kg)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+            `;
+            
+            let totalInventory = 0;
+            Object.entries(inventoryByMaterial).forEach(([material, amount]) => {
+                totalInventory += amount;
+                html += `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${amount.toFixed(1)}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <h5 class="text-sm font-medium text-green-800 mb-2">汇总情况</h5>
+                        <p class="text-sm text-gray-700">总入库量: <span class="font-medium">${totalInventory.toFixed(1)} kg</span></p>
+                        <p class="text-sm text-gray-700">入库原料种类: <span class="font-medium">${Object.keys(inventoryByMaterial).length} 种</span></p>
+                    </div>
+                </div>
+            `;
+            
+            resultDiv.innerHTML = html;
+        }
+        
+        // 原料库存价值分析
+        function analyzeMaterialsValue(startDate, endDate) {
+            const resultDiv = document.getElementById('analysis-result');
+            if (!resultDiv) return;
+            
+            // 计算实时库存和价值
+            const today = new Date().toISOString().split('T')[0];
+            const materialsWithValue = materials.map(material => {
+                // 计算今日使用数量
+                const todayUsage = usageRecords.filter(record => 
+                    record.date === today && record.materialId === material.id
+                ).reduce((sum, record) => sum + record.amount, 0);
+                
+                // 计算实时库存
+                const realTimeStock = material.stock + (material.todayInStock || 0) - todayUsage;
+                
+                // 计算实时价值
+                const realTimeValue = realTimeStock * material.unitCost;
+                
+                return {
+                    name: material.name,
+                    stock: realTimeStock,
+                    value: realTimeValue
+                };
+            });
+            
+            if (materialsWithValue.length === 0) {
+                resultDiv.innerHTML = `
+                    <div class="p-4 bg-yellow-50 rounded-lg">
+                        <p class="text-sm text-gray-700">没有原料库存数据！</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 生成分析结果
+            let html = `
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="text-md font-medium text-gray-800 mb-4">原料库存价值分析</h4>
+                    <div class="mb-4">
+                        <h5 class="text-sm font-medium text-gray-600 mb-2">库存明细</h5>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">原料名称</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">库存量 (kg)</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">库存价值 (元)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+            `;
+            
+            let totalStock = 0;
+            let totalValue = 0;
+            materialsWithValue.forEach(material => {
+                totalStock += material.stock;
+                totalValue += material.value;
+                html += `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material.name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material.stock.toFixed(1)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${material.value.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <h5 class="text-sm font-medium text-purple-800 mb-2">汇总情况</h5>
+                        <p class="text-sm text-gray-700">总库存量: <span class="font-medium">${totalStock.toFixed(1)} kg</span></p>
+                        <p class="text-sm text-gray-700">总库存价值: <span class="font-medium">${totalValue.toFixed(2)} 元</span></p>
+                    </div>
+                </div>
+            `;
+            
+            resultDiv.innerHTML = html;
+        }
+        
+        // 显示养殖池详细信息
+        function showPoolDetail(poolId) {
+            const pool = pools.find(p => p.id === poolId);
+            if (!pool) return;
+            
+            // 显示详细信息
+            document.getElementById('detail-pool-id').textContent = pool.id;
+            document.getElementById('detail-pool-length').textContent = pool.length;
+            document.getElementById('detail-pool-width').textContent = pool.width;
+            document.getElementById('detail-pool-area').textContent = pool.area;
+            document.getElementById('detail-pool-location').textContent = pool.location;
+            document.getElementById('detail-pool-status').textContent = pool.status;
+            
+            // 显示详细信息区域
+            document.getElementById('pool-detail').classList.remove('hidden');
         }
         
         // 更新概览数据
