@@ -3690,12 +3690,15 @@
             });
             
             // 生成分析按钮
-            document.getElementById('generate-custom-analysis').addEventListener('click', function() {
-                alert('分析生成中，请稍候...');
-                setTimeout(() => {
-                    alert('分析已完成！');
-                }, 2000);
-            });
+            const generateCustomAnalysisBtn = document.getElementById('generate-custom-analysis');
+            if (generateCustomAnalysisBtn) {
+                generateCustomAnalysisBtn.addEventListener('click', function() {
+                    alert('分析生成中，请稍候...');
+                    setTimeout(() => {
+                        alert('分析已完成！');
+                    }, 2000);
+                });
+            }
             
             // 原料统计相关事件
             document.querySelectorAll('.materials-tab-button').forEach(button => {
@@ -3733,16 +3736,6 @@
                 openModal('添加使用记录', getUsageForm(), 'add-usage');
             });
             
-            // 生成日报表按钮
-            document.getElementById('generate-feeding-report').addEventListener('click', function() {
-                generateFeedingReport();
-            });
-            
-            // 生成产出报表按钮
-            document.getElementById('generate-output-report').addEventListener('click', function() {
-                generateOutputReport();
-            });
-            
             // 种虫养殖统计报表按钮
             document.getElementById('search-breeding-report').addEventListener('click', function() {
                 searchBreedingReport();
@@ -3754,36 +3747,6 @@
             
             document.getElementById('generate-monthly-report').addEventListener('click', function() {
                 generateMonthlyReport();
-            });
-            
-            // 虫卵孵化统计报表按钮
-            document.getElementById('search-hatching-report').addEventListener('click', function() {
-                searchHatchingReport();
-            });
-            
-            document.getElementById('generate-hatching-weekly-report').addEventListener('click', function() {
-                generateHatchingWeeklyReport();
-            });
-            
-            document.getElementById('generate-hatching-monthly-report').addEventListener('click', function() {
-                generateHatchingMonthlyReport();
-            });
-            
-            // 数据分析按钮
-            document.getElementById('search-analysis').addEventListener('click', function() {
-                searchAnalysis();
-            });
-            
-            document.getElementById('export-data').addEventListener('click', function() {
-                exportData();
-            });
-            
-            document.getElementById('print-analysis-report').addEventListener('click', function() {
-                printAnalysisReport();
-            });
-            
-            document.getElementById('generate-custom-analysis').addEventListener('click', function() {
-                generateCustomAnalysis();
             });
             
             // 报表中心按钮
@@ -3866,109 +3829,6 @@
             // 导出库存按钮
             document.getElementById('export-inventory').addEventListener('click', function() {
                 alert('此功能已删除');
-            });
-            
-            // 生成使用报表按钮
-            document.getElementById('generate-usage-report').addEventListener('click', function() {
-                const startDate = document.getElementById('usage-start-date').value;
-                const endDate = document.getElementById('usage-end-date').value;
-                
-                if (!startDate || !endDate) {
-                    alert('请选择日期范围！');
-                    return;
-                }
-                
-                // 筛选日期范围内的使用记录
-                const filteredRecords = usageRecords.filter(record => {
-                    return record.date >= startDate && record.date <= endDate;
-                });
-                
-                if (filteredRecords.length === 0) {
-                    alert('所选日期范围内没有使用记录！');
-                    return;
-                }
-                
-                // 计算统计数据
-                const totalAmount = filteredRecords.reduce((sum, record) => sum + record.amount, 0);
-                const avgAmount = totalAmount / filteredRecords.length;
-                
-                // 按原料分组统计
-                const materialStats = {};
-                filteredRecords.forEach(record => {
-                    if (!materialStats[record.materialName]) {
-                        materialStats[record.materialName] = 0;
-                    }
-                    materialStats[record.materialName] += record.amount;
-                });
-                
-                // 生成报表HTML
-                let reportHTML = `
-                    <div class="p-4">
-                        <h2 class="text-xl font-bold text-center mb-4">原料使用报表 (${startDate} 至 ${endDate})</h2>
-                        <div class="mb-4">
-                            <p class="text-lg"><strong>总使用量:</strong> ${totalAmount.toFixed(2)} kg</p>
-                            <p class="text-lg"><strong>平均使用量:</strong> ${avgAmount.toFixed(2)} kg</p>
-                            <p class="text-lg"><strong>记录条数:</strong> ${filteredRecords.length}</p>
-                        </div>
-                        <h3 class="text-lg font-bold mb-2">各原料使用情况:</h3>
-                        <table class="w-full border-collapse mb-4">
-                            <thead>
-                                <tr class="bg-gray-100">
-                                    <th class="border px-4 py-2">原料名称</th>
-                                    <th class="border px-4 py-2">使用量 (kg)</th>
-                                    <th class="border px-4 py-2">占比</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                `;
-                
-                Object.entries(materialStats).forEach(([material, amount]) => {
-                    const percentage = ((amount / totalAmount) * 100).toFixed(2);
-                    reportHTML += `
-                        <tr>
-                            <td class="border px-4 py-2">${material}</td>
-                            <td class="border px-4 py-2">${amount.toFixed(2)}</td>
-                            <td class="border px-4 py-2">${percentage}%</td>
-                        </tr>
-                    `;
-                });
-                
-                reportHTML += `
-                            </tbody>
-                        </table>
-                        <h3 class="text-lg font-bold mb-2">详细记录:</h3>
-                        <table class="w-full border-collapse">
-                            <thead>
-                                <tr class="bg-gray-100">
-                                    <th class="border px-4 py-2">日期</th>
-                                    <th class="border px-4 py-2">原料名称</th>
-                                    <th class="border px-4 py-2">使用量 (kg)</th>
-                                    <th class="border px-4 py-2">使用部门</th>
-                                    <th class="border px-4 py-2">操作人</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                `;
-                
-                filteredRecords.forEach(record => {
-                    reportHTML += `
-                        <tr>
-                            <td class="border px-4 py-2">${record.date}</td>
-                            <td class="border px-4 py-2">${record.materialName}</td>
-                            <td class="border px-4 py-2">${record.amount.toFixed(2)}</td>
-                            <td class="border px-4 py-2">${record.department}</td>
-                            <td class="border px-4 py-2">${record.operator}</td>
-                        </tr>
-                    `;
-                });
-                
-                reportHTML += `
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-                
-                openModal('原料使用报表', reportHTML, 'usage-report');
             });
             
             // 初始化原料筛选下拉框
