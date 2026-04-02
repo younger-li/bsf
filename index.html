@@ -2854,86 +2854,92 @@
             }
             
             // 养殖趋势图
-            const breedingCtx = document.getElementById('breeding-chart').getContext('2d');
-            new Chart(breedingCtx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: '投料量 (kg)',
-                        data: feedingData,
-                        borderColor: 'rgb(59, 130, 246)',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        tension: 0.3,
-                        fill: true
-                    }, {
-                        label: '产出量 (kg)',
-                        data: outputData,
-                        borderColor: 'rgb(16, 185, 129)',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: false
-                        }
+            const breedingChart = document.getElementById('breeding-chart');
+            if (breedingChart) {
+                const breedingCtx = breedingChart.getContext('2d');
+                new Chart(breedingCtx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '投料量 (kg)',
+                            data: feedingData,
+                            borderColor: 'rgb(59, 130, 246)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        }, {
+                            label: '产出量 (kg)',
+                            data: outputData,
+                            borderColor: 'rgb(16, 185, 129)',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        }]
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
             
             // 孵化趋势图
-            const hatchingCtx = document.getElementById('hatching-chart').getContext('2d');
-            new Chart(hatchingCtx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: '种虫入厂 (g)',
-                        data: larvaeData,
-                        borderColor: 'rgb(139, 92, 246)',
-                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                        tension: 0.3,
-                        fill: true
-                    }, {
-                        label: '虫卵产出 (g)',
-                        data: eggData,
-                        borderColor: 'rgb(245, 158, 11)',
-                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: false
-                        }
+            const hatchingChart = document.getElementById('hatching-chart');
+            if (hatchingChart) {
+                const hatchingCtx = hatchingChart.getContext('2d');
+                new Chart(hatchingCtx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '种虫入厂 (g)',
+                            data: larvaeData,
+                            borderColor: 'rgb(139, 92, 246)',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        }, {
+                            label: '虫卵产出 (g)',
+                            data: eggData,
+                            borderColor: 'rgb(245, 158, 11)',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        }]
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
             
             // 各池投料量对比图
             if (document.getElementById('pool-feeding-chart')) {
@@ -3379,18 +3385,20 @@
             });
             
             // 用户菜单下拉
-            document.getElementById('user-menu').addEventListener('click', function() {
-                document.getElementById('user-dropdown').classList.toggle('hidden');
-            });
-            
-            // 点击其他地方关闭下拉菜单
-            document.addEventListener('click', function(event) {
-                const userMenu = document.getElementById('user-menu');
-                const userDropdown = document.getElementById('user-dropdown');
-                if (!userMenu.contains(event.target) && !userDropdown.contains(event.target)) {
-                    userDropdown.classList.add('hidden');
-                }
-            });
+            const userMenu = document.getElementById('user-menu');
+            const userDropdown = document.getElementById('user-dropdown');
+            if (userMenu && userDropdown) {
+                userMenu.addEventListener('click', function() {
+                    userDropdown.classList.toggle('hidden');
+                });
+                
+                // 点击其他地方关闭下拉菜单
+                document.addEventListener('click', function(event) {
+                    if (!userMenu.contains(event.target) && !userDropdown.contains(event.target)) {
+                        userDropdown.classList.add('hidden');
+                    }
+                });
+            }
             
             // 原料库存查询按钮
             const materialSearchBtn = document.getElementById('material-search-btn');
@@ -3503,113 +3511,132 @@
             }
             
             // 模态框相关事件
-            document.getElementById('close-modal').addEventListener('click', closeModal);
-            document.getElementById('cancel-modal').addEventListener('click', closeModal);
+            const closeModalBtn = document.getElementById('close-modal');
+            const cancelModalBtn = document.getElementById('cancel-modal');
+            const confirmModalBtn = document.getElementById('confirm-modal');
             
-            document.getElementById('confirm-modal').addEventListener('click', function() {
-                const modalType = this.dataset.modalType;
-                
-                switch (modalType) {
-                    case 'add-pool':
-                        addPool();
-                        break;
-                    case 'edit-pool':
-                        editPool();
-                        break;
-                    case 'add-feeding':
-                        addFeedingRecord();
-                        break;
-                    case 'edit-feeding':
-                        editFeedingRecord();
-                        break;
-                    case 'add-output':
-                        addOutputRecord();
-                        break;
-                    case 'edit-output':
-                        editOutputRecord();
-                        break;
-                    case 'add-incubator':
-                        addIncubator();
-                        break;
-                    case 'edit-incubator':
-                        editIncubator();
-                        break;
-                    case 'add-oviposition-room':
-                        addOvipositionRoom();
-                        break;
-                    case 'edit-oviposition-room':
-                        editOvipositionRoom();
-                        break;
-                    case 'add-larvae':
-                        addLarvaeRecord();
-                        break;
-                    case 'edit-larvae':
-                        editLarvaeRecord();
-                        break;
-                    case 'add-pupa-in':
-                        addPupaInRecord();
-                        break;
-                    case 'edit-pupa-in':
-                        editPupaInRecord();
-                        break;
-                    case 'add-pupa-out':
-                        addPupaOutRecord();
-                        break;
-                    case 'edit-pupa-out':
-                        editPupaOutRecord();
-                        break;
-                    case 'add-oviposition-in':
-                        addOvipositionInRecord();
-                        break;
-                    case 'edit-oviposition-in':
-                        editOvipositionInRecord();
-                        break;
-                    case 'add-oviposition-out':
-                        addOvipositionOutRecord();
-                        break;
-                    case 'edit-oviposition-out':
-                        editOvipositionOutRecord();
-                        break;
-                    case 'add-material':
-                        addMaterial();
-                        break;
-                    case 'edit-material':
-                        editMaterialSave();
-                        break;
-                    case 'add-usage':
-                        addUsageRecord();
-                        break;
-                    case 'edit-usage':
-                        editUsageRecord();
-                        break;
-                    case 'login':
-                        const phone = document.getElementById('login-phone').value;
-                        const password = document.getElementById('login-password').value;
-                        if (phone && password) {
-                            // 简单的登录验证
-                            if ((phone === '13800138000' && password === 'admin123') || 
-                                (phone === '13900139000' && password === 'super123')) {
-                                alert('登录成功！');
-                            } else {
-                                alert('手机号或密码错误！');
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener('click', closeModal);
+            }
+            
+            if (cancelModalBtn) {
+                cancelModalBtn.addEventListener('click', closeModal);
+            }
+            
+            if (confirmModalBtn) {
+                confirmModalBtn.addEventListener('click', function() {
+                    const modalType = this.dataset.modalType;
+                    
+                    switch (modalType) {
+                        case 'add-pool':
+                            addPool();
+                            break;
+                        case 'edit-pool':
+                            editPool();
+                            break;
+                        case 'add-feeding':
+                            addFeedingRecord();
+                            break;
+                        case 'edit-feeding':
+                            editFeedingRecord();
+                            break;
+                        case 'add-output':
+                            addOutputRecord();
+                            break;
+                        case 'edit-output':
+                            editOutputRecord();
+                            break;
+                        case 'add-incubator':
+                            addIncubator();
+                            break;
+                        case 'edit-incubator':
+                            editIncubator();
+                            break;
+                        case 'add-oviposition-room':
+                            addOvipositionRoom();
+                            break;
+                        case 'edit-oviposition-room':
+                            editOvipositionRoom();
+                            break;
+                        case 'add-larvae':
+                            addLarvaeRecord();
+                            break;
+                        case 'edit-larvae':
+                            editLarvaeRecord();
+                            break;
+                        case 'add-pupa-in':
+                            addPupaInRecord();
+                            break;
+                        case 'edit-pupa-in':
+                            editPupaInRecord();
+                            break;
+                        case 'add-pupa-out':
+                            addPupaOutRecord();
+                            break;
+                        case 'edit-pupa-out':
+                            editPupaOutRecord();
+                            break;
+                        case 'add-oviposition-in':
+                            addOvipositionInRecord();
+                            break;
+                        case 'edit-oviposition-in':
+                            editOvipositionInRecord();
+                            break;
+                        case 'add-oviposition-out':
+                            addOvipositionOutRecord();
+                            break;
+                        case 'edit-oviposition-out':
+                            editOvipositionOutRecord();
+                            break;
+                        case 'add-material':
+                            addMaterial();
+                            break;
+                        case 'edit-material':
+                            editMaterialSave();
+                            break;
+                        case 'add-usage':
+                            addUsageRecord();
+                            break;
+                        case 'edit-usage':
+                            editUsageRecord();
+                            break;
+                        case 'login':
+                            const loginPhone = document.getElementById('login-phone');
+                            const loginPassword = document.getElementById('login-password');
+                            if (loginPhone && loginPassword) {
+                                const phone = loginPhone.value;
+                                const password = loginPassword.value;
+                                if (phone && password) {
+                                    // 简单的登录验证
+                                    if ((phone === '13800138000' && password === 'admin123') || 
+                                        (phone === '13900139000' && password === 'super123')) {
+                                        alert('登录成功！');
+                                    } else {
+                                        alert('手机号或密码错误！');
+                                    }
+                                } else {
+                                    alert('请输入手机号和密码！');
+                                }
                             }
-                        } else {
-                            alert('请输入手机号和密码！');
-                        }
-                        break;
-                    case 'register':
-                        const regPhone = document.getElementById('register-phone').value;
-                        const regPassword = document.getElementById('register-password').value;
-                        if (regPhone && regPassword) {
-                            alert('注册成功！请使用手机号和密码登录。');
-                        } else {
-                            alert('请输入手机号和密码！');
-                        }
-                        break;
-                }
-                
-                closeModal();
-            });
+                            break;
+                        case 'register':
+                            const registerPhone = document.getElementById('register-phone');
+                            const registerPassword = document.getElementById('register-password');
+                            if (registerPhone && registerPassword) {
+                                const regPhone = registerPhone.value;
+                                const regPassword = registerPassword.value;
+                                if (regPhone && regPassword) {
+                                    alert('注册成功！请使用手机号和密码登录。');
+                                } else {
+                                    alert('请输入手机号和密码！');
+                                }
+                            }
+                            break;
+                    }
+                    
+                    closeModal();
+                });
+            }
             
             // 添加养殖池按钮
             document.getElementById('add-pool').addEventListener('click', function() {
@@ -3910,15 +3937,25 @@
         
         // 打开模态框
         function openModal(title, content, type) {
-            document.getElementById('modal-title').textContent = title;
-            document.getElementById('modal-content').innerHTML = content;
-            document.getElementById('confirm-modal').dataset.modalType = type;
-            document.getElementById('modal').classList.remove('hidden');
+            const modalTitle = document.getElementById('modal-title');
+            const modalContent = document.getElementById('modal-content');
+            const confirmModal = document.getElementById('confirm-modal');
+            const modal = document.getElementById('modal');
+            
+            if (modalTitle && modalContent && confirmModal && modal) {
+                modalTitle.textContent = title;
+                modalContent.innerHTML = content;
+                confirmModal.dataset.modalType = type;
+                modal.classList.remove('hidden');
+            }
         }
         
         // 关闭模态框
         function closeModal() {
-            document.getElementById('modal').classList.add('hidden');
+            const modal = document.getElementById('modal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
         }
         
         // 生成投料日报表
