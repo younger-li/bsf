@@ -3312,7 +3312,10 @@
                     this.classList.add('active', 'border-blue-500', 'text-blue-600');
                     this.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
                     
-                    document.getElementById(`${tabId}-tab`).classList.remove('hidden');
+                    const tabContent = document.getElementById(`${tabId}-tab`);
+                    if (tabContent) {
+                        tabContent.classList.remove('hidden');
+                    }
                     
                     // 当切换到原料管理选项卡时，更新原料库存表格
                     if (tabId === 'materials') {
@@ -3338,7 +3341,10 @@
                     this.classList.add('active', 'border-blue-500', 'text-blue-600');
                     this.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
                     
-                    document.getElementById(`${tabId}-breeding-tab`).classList.remove('hidden');
+                    const tabContent = document.getElementById(`${tabId}-breeding-tab`);
+                    if (tabContent) {
+                        tabContent.classList.remove('hidden');
+                    }
                 });
             });
             
@@ -3359,7 +3365,10 @@
                     this.classList.add('active', 'border-blue-500', 'text-blue-600');
                     this.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
                     
-                    document.getElementById(`${tabId}-hatching-tab`).classList.remove('hidden');
+                    const tabContent = document.getElementById(`${tabId}-hatching-tab`);
+                    if (tabContent) {
+                        tabContent.classList.remove('hidden');
+                    }
                 });
             });
             
@@ -3380,7 +3389,10 @@
                     this.classList.add('active', 'border-blue-500', 'text-blue-600');
                     this.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
                     
-                    document.getElementById(`${tabId}-analysis-tab`).classList.remove('hidden');
+                    const tabContent = document.getElementById(`${tabId}-analysis-tab`);
+                    if (tabContent) {
+                        tabContent.classList.remove('hidden');
+                    }
                 });
             });
             
@@ -3744,7 +3756,10 @@
                     this.classList.add('active', 'border-blue-500', 'text-blue-600');
                     this.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
                     
-                    document.getElementById(`${tabId}-materials-tab`).classList.remove('hidden');
+                    const tabContent = document.getElementById(`${tabId}-materials-tab`);
+                    if (tabContent) {
+                        tabContent.classList.remove('hidden');
+                    }
                     
                     // 当切换到使用记录选项卡时，默认显示当天记录
                     if (tabId === 'usage') {
@@ -7853,27 +7868,54 @@
         function updateOverviewData() {
             // 计算当前种虫数量
             const totalLarvae = outputRecords.reduce((sum, record) => sum + record.amount, 0);
-            document.getElementById('total-larvae').textContent = totalLarvae.toFixed(1);
+            const totalLarvaeElement = document.getElementById('total-larvae');
+            if (totalLarvaeElement) {
+                totalLarvaeElement.textContent = totalLarvae.toFixed(1);
+            }
             
             // 计算虫卵总产量
             const totalEggs = ovipositionOutRecords.reduce((sum, record) => sum + record.amount, 0);
-            document.getElementById('total-eggs').textContent = totalEggs.toFixed(1);
+            const totalEggsElement = document.getElementById('total-eggs');
+            if (totalEggsElement) {
+                totalEggsElement.textContent = totalEggs.toFixed(1);
+            }
             
             // 计算料虫比
             const totalFeed = feedingRecords.reduce((sum, record) => sum + record.amount, 0);
             const feedRatio = totalLarvae > 0 ? totalFeed / totalLarvae : 0;
-            document.getElementById('feed-ratio').textContent = feedRatio.toFixed(2);
+            const feedRatioElement = document.getElementById('feed-ratio');
+            if (feedRatioElement) {
+                feedRatioElement.textContent = feedRatio.toFixed(2);
+            }
             
             // 计算虫卵比
             const totalPupa = pupaOutRecords.reduce((sum, record) => sum + record.amount, 0);
             const eggRatio = totalPupa > 0 ? (totalEggs / totalPupa * 100) : 0;
-            document.getElementById('egg-ratio').textContent = eggRatio.toFixed(2) + '%';
+            const eggRatioElement = document.getElementById('egg-ratio');
+            if (eggRatioElement) {
+                eggRatioElement.textContent = eggRatio.toFixed(2) + '%';
+            }
             
             // 设置增减百分比（模拟数据）
-            document.getElementById('larvae-increase').textContent = '12.5%';
-            document.getElementById('eggs-increase').textContent = '8.3%';
-            document.getElementById('feed-ratio-decrease').textContent = '5.2%';
-            document.getElementById('egg-ratio-increase').textContent = '0.2%';
+            const larvaeIncreaseElement = document.getElementById('larvae-increase');
+            if (larvaeIncreaseElement) {
+                larvaeIncreaseElement.textContent = '12.5%';
+            }
+            
+            const eggsIncreaseElement = document.getElementById('eggs-increase');
+            if (eggsIncreaseElement) {
+                eggsIncreaseElement.textContent = '8.3%';
+            }
+            
+            const feedRatioDecreaseElement = document.getElementById('feed-ratio-decrease');
+            if (feedRatioDecreaseElement) {
+                feedRatioDecreaseElement.textContent = '5.2%';
+            }
+            
+            const eggRatioIncreaseElement = document.getElementById('egg-ratio-increase');
+            if (eggRatioIncreaseElement) {
+                eggRatioIncreaseElement.textContent = '0.2%';
+            }
         }
     </script>
 </body>
