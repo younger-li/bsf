@@ -3743,94 +3743,130 @@
             }
             
             // 种虫养殖统计报表按钮
-            document.getElementById('search-breeding-report').addEventListener('click', function() {
-                searchBreedingReport();
-            });
+            const searchBreedingReportBtn = document.getElementById('search-breeding-report');
+            if (searchBreedingReportBtn) {
+                searchBreedingReportBtn.addEventListener('click', function() {
+                    searchBreedingReport();
+                });
+            }
             
-            document.getElementById('generate-weekly-report').addEventListener('click', function() {
-                generateWeeklyReport();
-            });
+            const generateWeeklyReportBtn = document.getElementById('generate-weekly-report');
+            if (generateWeeklyReportBtn) {
+                generateWeeklyReportBtn.addEventListener('click', function() {
+                    generateWeeklyReport();
+                });
+            }
             
-            document.getElementById('generate-monthly-report').addEventListener('click', function() {
-                generateMonthlyReport();
-            });
+            const generateMonthlyReportBtn = document.getElementById('generate-monthly-report');
+            if (generateMonthlyReportBtn) {
+                generateMonthlyReportBtn.addEventListener('click', function() {
+                    generateMonthlyReport();
+                });
+            }
             
             // 报表中心按钮
-            document.getElementById('generate-daily-report-btn').addEventListener('click', function() {
-                generateReport('daily');
-            });
+            const generateDailyReportBtn = document.getElementById('generate-daily-report-btn');
+            if (generateDailyReportBtn) {
+                generateDailyReportBtn.addEventListener('click', function() {
+                    generateReport('daily');
+                });
+            }
             
-            document.getElementById('generate-weekly-report-btn').addEventListener('click', function() {
-                generateReport('weekly');
-            });
+            const generateWeeklyReportBtn = document.getElementById('generate-weekly-report-btn');
+            if (generateWeeklyReportBtn) {
+                generateWeeklyReportBtn.addEventListener('click', function() {
+                    generateReport('weekly');
+                });
+            }
             
-            document.getElementById('generate-monthly-report-btn').addEventListener('click', function() {
-                generateReport('monthly');
-            });
+            const generateMonthlyReportBtn = document.getElementById('generate-monthly-report-btn');
+            if (generateMonthlyReportBtn) {
+                generateMonthlyReportBtn.addEventListener('click', function() {
+                    generateReport('monthly');
+                });
+            }
             
-            document.getElementById('generate-report').addEventListener('click', function() {
-                generateCustomReport();
-            });
+            const generateReportBtn = document.getElementById('generate-report');
+            if (generateReportBtn) {
+                generateReportBtn.addEventListener('click', function() {
+                    generateCustomReport();
+                });
+            }
             
             // 历史报表按钮
-            document.getElementById('view-report-1').addEventListener('click', function(e) {
-                e.preventDefault();
-                viewHistoricalReport(1);
-            });
+            const viewReport1Btn = document.getElementById('view-report-1');
+            if (viewReport1Btn) {
+                viewReport1Btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    viewHistoricalReport(1);
+                });
+            }
             
-            document.getElementById('download-report-1').addEventListener('click', function(e) {
-                e.preventDefault();
-                downloadHistoricalReport(1);
-            });
+            const downloadReport1Btn = document.getElementById('download-report-1');
+            if (downloadReport1Btn) {
+                downloadReport1Btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    downloadHistoricalReport(1);
+                });
+            }
             
             // 登录按钮点击事件
-            document.getElementById('login').addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation(); // 阻止事件冒泡
-                const loginForm = `
-                    <form>
-                        <div class="mb-4">
-                            <label for="login-phone" class="block text-sm font-medium text-gray-700 mb-1">手机号</label>
-                            <input type="tel" id="login-phone" class="w-full border rounded-md px-3 py-2 text-sm" required>
-                        </div>
-                        <div class="mb-4">
-                            <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
-                            <input type="password" id="login-password" class="w-full border rounded-md px-3 py-2 text-sm" required>
-                        </div>
-                    </form>
-                `;
-                openModal('登录', loginForm, 'login');
-            });
+            const loginBtn = document.getElementById('login');
+            if (loginBtn) {
+                loginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation(); // 阻止事件冒泡
+                    const loginForm = `
+                        <form>
+                            <div class="mb-4">
+                                <label for="login-phone" class="block text-sm font-medium text-gray-700 mb-1">手机号</label>
+                                <input type="tel" id="login-phone" class="w-full border rounded-md px-3 py-2 text-sm" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
+                                <input type="password" id="login-password" class="w-full border rounded-md px-3 py-2 text-sm" required>
+                            </div>
+                        </form>
+                    `;
+                    openModal('登录', loginForm, 'login');
+                });
+            }
             
             // 注册按钮点击事件
-            document.getElementById('register').addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation(); // 阻止事件冒泡
-                const registerForm = `
-                    <form>
-                        <div class="mb-4">
-                            <label for="register-phone" class="block text-sm font-medium text-gray-700 mb-1">手机号</label>
-                            <input type="tel" id="register-phone" class="w-full border rounded-md px-3 py-2 text-sm" required>
-                        </div>
-                        <div class="mb-4">
-                            <label for="register-password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
-                            <input type="password" id="register-password" class="w-full border rounded-md px-3 py-2 text-sm" required>
-                        </div>
-                    </form>
-                `;
-                openModal('注册', registerForm, 'register');
-            });
+            const registerBtn = document.getElementById('register');
+            if (registerBtn) {
+                registerBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation(); // 阻止事件冒泡
+                    const registerForm = `
+                        <form>
+                            <div class="mb-4">
+                                <label for="register-phone" class="block text-sm font-medium text-gray-700 mb-1">手机号</label>
+                                <input type="tel" id="register-phone" class="w-full border rounded-md px-3 py-2 text-sm" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="register-password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
+                                <input type="password" id="register-password" class="w-full border rounded-md px-3 py-2 text-sm" required>
+                            </div>
+                        </form>
+                    `;
+                    openModal('注册', registerForm, 'register');
+                });
+            }
 
             // 退出登录按钮点击事件
-            document.getElementById('logout').addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation(); // 阻止事件冒泡
-                if (confirm('确定要退出登录吗？')) {
-                    alert('您已成功退出登录！');
-                    // 实际应用中，这里应该清除登录状态并跳转到登录页面
-                    // window.location.href = 'login.html';
-                }
-            });
+            const logoutBtn = document.getElementById('logout');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation(); // 阻止事件冒泡
+                    if (confirm('确定要退出登录吗？')) {
+                        alert('您已成功退出登录！');
+                        // 实际应用中，这里应该清除登录状态并跳转到登录页面
+                        // window.location.href = 'login.html';
+                    }
+                });
+            }
 
             // 导出库存按钮
             const exportInventoryBtn = document.getElementById('export-inventory');
