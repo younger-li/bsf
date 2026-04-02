@@ -3651,62 +3651,95 @@
             }
             
             // 添加养殖池按钮
-            document.getElementById('add-pool').addEventListener('click', function() {
-                openModal('添加养殖池', getPoolForm(), 'add-pool');
-            });
+            const addPoolBtn = document.getElementById('add-pool');
+            if (addPoolBtn) {
+                addPoolBtn.addEventListener('click', function() {
+                    openModal('添加养殖池', getPoolForm(), 'add-pool');
+                });
+            }
             
             // 添加投料记录按钮
-            document.getElementById('add-feeding-record').addEventListener('click', function() {
-                openModal('添加投料记录', getFeedingForm(), 'add-feeding');
-            });
+            const addFeedingRecordBtn = document.getElementById('add-feeding-record');
+            if (addFeedingRecordBtn) {
+                addFeedingRecordBtn.addEventListener('click', function() {
+                    openModal('添加投料记录', getFeedingForm(), 'add-feeding');
+                });
+            }
             
             // 添加产出记录按钮
-            document.getElementById('add-output-record').addEventListener('click', function() {
-                openModal('添加产出记录', getOutputForm(), 'add-output');
-            });
+            const addOutputRecordBtn = document.getElementById('add-output-record');
+            if (addOutputRecordBtn) {
+                addOutputRecordBtn.addEventListener('click', function() {
+                    openModal('添加产出记录', getOutputForm(), 'add-output');
+                });
+            }
             
             // 添加培育池按钮
-            document.getElementById('add-incubator').addEventListener('click', function() {
-                openModal('添加培育池', getIncubatorForm(), 'add-incubator');
-            });
+            const addIncubatorBtn = document.getElementById('add-incubator');
+            if (addIncubatorBtn) {
+                addIncubatorBtn.addEventListener('click', function() {
+                    openModal('添加培育池', getIncubatorForm(), 'add-incubator');
+                });
+            }
             
             // 添加产卵房按钮
-            document.getElementById('add-oviposition-room').addEventListener('click', function() {
-                openModal('添加产卵房', getOvipositionRoomForm(), 'add-oviposition-room');
-            });
+            const addOvipositionRoomBtn = document.getElementById('add-oviposition-room');
+            if (addOvipositionRoomBtn) {
+                addOvipositionRoomBtn.addEventListener('click', function() {
+                    openModal('添加产卵房', getOvipositionRoomForm(), 'add-oviposition-room');
+                });
+            }
             
             // 添加种虫入厂记录按钮
-            document.getElementById('add-larvae-record').addEventListener('click', function() {
-                openModal('添加入厂记录', getLarvaeForm(), 'add-larvae');
-            });
+            const addLarvaeRecordBtn = document.getElementById('add-larvae-record');
+            if (addLarvaeRecordBtn) {
+                addLarvaeRecordBtn.addEventListener('click', function() {
+                    openModal('添加入厂记录', getLarvaeForm(), 'add-larvae');
+                });
+            }
             
             // 添加进蛹记录按钮
-            document.getElementById('add-pupa-in-record').addEventListener('click', function() {
-                openModal('添加进蛹记录', getPupaInForm(), 'add-pupa-in');
-            });
+            const addPupaInRecordBtn = document.getElementById('add-pupa-in-record');
+            if (addPupaInRecordBtn) {
+                addPupaInRecordBtn.addEventListener('click', function() {
+                    openModal('添加进蛹记录', getPupaInForm(), 'add-pupa-in');
+                });
+            }
             
             // 添加出蛹记录按钮
-            document.getElementById('add-pupa-out-record').addEventListener('click', function() {
-                openModal('添加出蛹记录', getPupaOutForm(), 'add-pupa-out');
-            });
+            const addPupaOutRecordBtn = document.getElementById('add-pupa-out-record');
+            if (addPupaOutRecordBtn) {
+                addPupaOutRecordBtn.addEventListener('click', function() {
+                    openModal('添加出蛹记录', getPupaOutForm(), 'add-pupa-out');
+                });
+            }
             
             // 添加进产卵房记录按钮
-            document.getElementById('add-oviposition-in-record').addEventListener('click', function() {
-                openModal('添加进房记录', getOvipositionInForm(), 'add-oviposition-in');
-            });
+            const addOvipositionInRecordBtn = document.getElementById('add-oviposition-in-record');
+            if (addOvipositionInRecordBtn) {
+                addOvipositionInRecordBtn.addEventListener('click', function() {
+                    openModal('添加进房记录', getOvipositionInForm(), 'add-oviposition-in');
+                });
+            }
             
             // 添加虫卵产出记录按钮
-            document.getElementById('add-oviposition-out-record').addEventListener('click', function() {
-                openModal('添加虫卵产出记录', getOvipositionOutForm(), 'add-oviposition-out');
-            });
+            const addOvipositionOutRecordBtn = document.getElementById('add-oviposition-out-record');
+            if (addOvipositionOutRecordBtn) {
+                addOvipositionOutRecordBtn.addEventListener('click', function() {
+                    openModal('添加虫卵产出记录', getOvipositionOutForm(), 'add-oviposition-out');
+                });
+            }
             
             // 生成报表相关按钮
-            document.getElementById('generate-report').addEventListener('click', function() {
-                alert('报表生成中，请稍候...');
-                setTimeout(() => {
-                    alert('报表已生成！');
-                }, 2000);
-            });
+            const generateReportBtn = document.getElementById('generate-report');
+            if (generateReportBtn) {
+                generateReportBtn.addEventListener('click', function() {
+                    alert('报表生成中，请稍候...');
+                    setTimeout(() => {
+                        alert('报表已生成！');
+                    }, 2000);
+                });
+            }
             
             // 导出数据相关按钮
             document.querySelectorAll('[id$="-export-data"], [id$="-export-feed-ratio-data"], [id$="-export-egg-ratio-data"], [id$="-export-production-data"]').forEach(button => {
