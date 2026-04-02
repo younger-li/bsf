@@ -3727,14 +3727,20 @@
             });
             
             // 添加原料按钮
-            document.getElementById('add-material').addEventListener('click', function() {
-                openModal('添加原料', getMaterialForm(), 'add-material');
-            });
+            const addMaterialBtn = document.getElementById('add-material');
+            if (addMaterialBtn) {
+                addMaterialBtn.addEventListener('click', function() {
+                    openModal('添加原料', getMaterialForm(), 'add-material');
+                });
+            }
             
             // 添加使用记录按钮
-            document.getElementById('add-usage-record').addEventListener('click', function() {
-                openModal('添加使用记录', getUsageForm(), 'add-usage');
-            });
+            const addUsageRecordBtn = document.getElementById('add-usage-record');
+            if (addUsageRecordBtn) {
+                addUsageRecordBtn.addEventListener('click', function() {
+                    openModal('添加使用记录', getUsageForm(), 'add-usage');
+                });
+            }
             
             // 种虫养殖统计报表按钮
             document.getElementById('search-breeding-report').addEventListener('click', function() {
@@ -3827,9 +3833,12 @@
             });
 
             // 导出库存按钮
-            document.getElementById('export-inventory').addEventListener('click', function() {
-                alert('此功能已删除');
-            });
+            const exportInventoryBtn = document.getElementById('export-inventory');
+            if (exportInventoryBtn) {
+                exportInventoryBtn.addEventListener('click', function() {
+                    alert('此功能已删除');
+                });
+            }
             
             // 初始化原料筛选下拉框
             function initMaterialFilter() {
@@ -3853,11 +3862,14 @@
             initMaterialFilter();
             
             // 查询使用记录按钮
-            document.getElementById('search-usage-records').addEventListener('click', function() {
-                const startDate = document.getElementById('usage-start-date').value;
-                const endDate = document.getElementById('usage-end-date').value;
-                updateUsageTable(startDate, endDate);
-            });
+            const searchUsageRecordsBtn = document.getElementById('search-usage-records');
+            if (searchUsageRecordsBtn) {
+                searchUsageRecordsBtn.addEventListener('click', function() {
+                    const startDate = document.getElementById('usage-start-date').value;
+                    const endDate = document.getElementById('usage-end-date').value;
+                    updateUsageTable(startDate, endDate);
+                });
+            }
         }
         
         // 打开模态框
