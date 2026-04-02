@@ -2780,165 +2780,176 @@
         
         // 初始化页面
         document.addEventListener('DOMContentLoaded', function() {
-            // 设置当前日期
-            const today = new Date().toISOString().split('T')[0];
-            document.querySelectorAll('input[type="date"]').forEach(input => {
-                input.value = today;
-            });
-            
-            // 初始化图表
-            initCharts();
-            
-            // 绑定事件
-            bindEvents();
-            
-            // 加载数据
-            loadData();
+            try {
+                // 设置当前日期
+                const today = new Date().toISOString().split('T')[0];
+                const dateInputs = document.querySelectorAll('input[type="date"]');
+                if (dateInputs) {
+                    dateInputs.forEach(input => {
+                        input.value = today;
+                    });
+                }
+                
+                // 初始化图表
+                initCharts();
+                
+                // 绑定事件
+                bindEvents();
+                
+                // 加载数据
+                loadData();
+            } catch (error) {
+                console.error('初始化页面时出错:', error);
+            }
         });
         
         // 初始化图表
         function initCharts() {
-            // 生成最近一周的日期标签
-            const labels = [];
-            const today = new Date();
-            for (let i = 6; i >= 0; i--) {
-                const date = new Date(today);
-                date.setDate(date.getDate() - i);
-                const month = date.getMonth() + 1;
-                const day = date.getDate();
-                labels.push(`${month}-${day}`);
-            }
-            
-            // 汇总养殖数据
-            const feedingData = [];
-            const outputData = [];
-            
-            for (let i = 6; i >= 0; i--) {
-                const date = new Date(today);
-                date.setDate(date.getDate() - i);
-                const dateStr = date.toISOString().split('T')[0];
+            try {
+                // 生成最近一周的日期标签
+                const labels = [];
+                const today = new Date();
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date(today);
+                    date.setDate(date.getDate() - i);
+                    const month = date.getMonth() + 1;
+                    const day = date.getDate();
+                    labels.push(`${month}-${day}`);
+                }
                 
-                // 汇总当天的投料量
-                const dayFeeding = feedingRecords.filter(record => 
-                    record.time.startsWith(dateStr)
-                ).reduce((sum, record) => sum + record.amount, 0);
-                feedingData.push(dayFeeding);
+                // 汇总养殖数据
+                const feedingData = [];
+                const outputData = [];
                 
-                // 汇总当天的产出量
-                const dayOutput = outputRecords.filter(record => 
-                    record.time.startsWith(dateStr)
-                ).reduce((sum, record) => sum + record.amount, 0);
-                outputData.push(dayOutput);
-            }
-            
-            // 汇总孵化数据
-            const larvaeData = [];
-            const eggData = [];
-            
-            for (let i = 6; i >= 0; i--) {
-                const date = new Date(today);
-                date.setDate(date.getDate() - i);
-                const dateStr = date.toISOString().split('T')[0];
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date(today);
+                    date.setDate(date.getDate() - i);
+                    const dateStr = date.toISOString().split('T')[0];
+                    
+                    // 汇总当天的投料量
+                    const dayFeeding = feedingRecords.filter(record => 
+                        record.time.startsWith(dateStr)
+                    ).reduce((sum, record) => sum + record.amount, 0);
+                    feedingData.push(dayFeeding);
+                    
+                    // 汇总当天的产出量
+                    const dayOutput = outputRecords.filter(record => 
+                        record.time.startsWith(dateStr)
+                    ).reduce((sum, record) => sum + record.amount, 0);
+                    outputData.push(dayOutput);
+                }
                 
-                // 汇总当天的幼虫数量
-                const dayLarvae = larvaeRecords.filter(record => 
-                    record.time.startsWith(dateStr)
-                ).reduce((sum, record) => sum + record.amount, 0);
-                larvaeData.push(dayLarvae);
+                // 汇总孵化数据
+                const larvaeData = [];
+                const eggData = [];
                 
-                // 汇总当天的虫卵产出
-                const dayEggs = ovipositionOutRecords.filter(record => 
-                    record.time.startsWith(dateStr)
-                ).reduce((sum, record) => sum + record.amount, 0);
-                eggData.push(dayEggs);
-            }
-            
-            // 养殖趋势图
-            const breedingChart = document.getElementById('breeding-chart');
-            if (breedingChart) {
-                const breedingCtx = breedingChart.getContext('2d');
-                new Chart(breedingCtx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: '投料量 (kg)',
-                            data: feedingData,
-                            borderColor: 'rgb(59, 130, 246)',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            tension: 0.3,
-                            fill: true
-                        }, {
-                            label: '产出量 (kg)',
-                            data: outputData,
-                            borderColor: 'rgb(16, 185, 129)',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            tension: 0.3,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            },
-                            title: {
-                                display: false
-                            }
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date(today);
+                    date.setDate(date.getDate() - i);
+                    const dateStr = date.toISOString().split('T')[0];
+                    
+                    // 汇总当天的幼虫数量
+                    const dayLarvae = larvaeRecords.filter(record => 
+                        record.time.startsWith(dateStr)
+                    ).reduce((sum, record) => sum + record.amount, 0);
+                    larvaeData.push(dayLarvae);
+                    
+                    // 汇总当天的虫卵产出
+                    const dayEggs = ovipositionOutRecords.filter(record => 
+                        record.time.startsWith(dateStr)
+                    ).reduce((sum, record) => sum + record.amount, 0);
+                    eggData.push(dayEggs);
+                }
+                
+                // 养殖趋势图
+                const breedingChart = document.getElementById('breeding-chart');
+                if (breedingChart) {
+                    const breedingCtx = breedingChart.getContext('2d');
+                    new Chart(breedingCtx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: '投料量 (kg)',
+                                data: feedingData,
+                                borderColor: 'rgb(59, 130, 246)',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                tension: 0.3,
+                                fill: true
+                            }, {
+                                label: '产出量 (kg)',
+                                data: outputData,
+                                borderColor: 'rgb(16, 185, 129)',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                tension: 0.3,
+                                fill: true
+                            }]
                         },
-                        scales: {
-                            y: {
-                                beginAtZero: true
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
                             }
                         }
-                    }
-                });
-            }
-            
-            // 孵化趋势图
-            const hatchingChart = document.getElementById('hatching-chart');
-            if (hatchingChart) {
-                const hatchingCtx = hatchingChart.getContext('2d');
-                new Chart(hatchingCtx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: '种虫入厂 (g)',
-                            data: larvaeData,
-                            borderColor: 'rgb(139, 92, 246)',
-                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                            tension: 0.3,
-                            fill: true
-                        }, {
-                            label: '虫卵产出 (g)',
-                            data: eggData,
-                            borderColor: 'rgb(245, 158, 11)',
-                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                            tension: 0.3,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            },
-                            title: {
-                                display: false
-                            }
+                    });
+                }
+                
+                // 孵化趋势图
+                const hatchingChart = document.getElementById('hatching-chart');
+                if (hatchingChart) {
+                    const hatchingCtx = hatchingChart.getContext('2d');
+                    new Chart(hatchingCtx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: '种虫入厂 (g)',
+                                data: larvaeData,
+                                borderColor: 'rgb(139, 92, 246)',
+                                backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                                tension: 0.3,
+                                fill: true
+                            }, {
+                                label: '虫卵产出 (g)',
+                                data: eggData,
+                                borderColor: 'rgb(245, 158, 11)',
+                                backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                                tension: 0.3,
+                                fill: true
+                            }]
                         },
-                        scales: {
-                            y: {
-                                beginAtZero: true
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }
+            } catch (error) {
+                console.error('初始化图表时出错:', error);
             }
             
             // 各池投料量对比图
@@ -3293,6 +3304,7 @@
         
         // 绑定事件
         function bindEvents() {
+            try {
             // 选项卡切换
             document.querySelectorAll('.tab-button').forEach(button => {
                 button.addEventListener('click', function() {
@@ -3980,6 +3992,9 @@
                     const endDate = document.getElementById('usage-end-date').value;
                     updateUsageTable(startDate, endDate);
                 });
+            }
+            } catch (error) {
+                console.error('绑定事件时出错:', error);
             }
         }
         
